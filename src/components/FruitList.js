@@ -5,10 +5,11 @@ export default function FruitList({ fruits, addToCart }) {
   return (
     <div>
       <h2>Fruits</h2>
-      <ul>
+      <ul className='fruitsul'>
         {fruits.map(fruit => (
-          <li key={fruit.id}>            {fruit.name} — ₹{fruit.price}
-            <button onClick={() => addToCart(fruit)}>Add</button>
+          <li className='fruitsli' key={fruit.id}>
+            <div>{fruit.name} — ₹{fruit.price}</div>
+            <div style={{marginTop:"10px"}}><button onClick={() => addToCart(fruit)}>Add</button></div>
           </li>
         ))}
       </ul>
