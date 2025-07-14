@@ -38,7 +38,10 @@ export default function FruitList({ fruits, addToCart }) {
         {fruits.map((fruit, index) => (
           <li className='fruitsli' key={fruit.id}>
             <div style={{fontWeight:"bold"}}>{fruit.name} </div>
-            <div style={{marginBottom:"10px"}}> ₹{fruit.price}</div>
+            <div style={{marginBottom:"10px"}}> 
+              <span style={{fontWeight:"bold", fontSize:"16px"}}> ₹{fruit.price} </span>
+              <span style={{textDecoration:"line-through", fontSize:"12px"}}> ₹{(fruit.price * (1.25)).toFixed(2)} </span>
+              </div>
             <div className='divWeightInputUnit'>
               <div style={{ flex: 0.5 }}>
                 <input

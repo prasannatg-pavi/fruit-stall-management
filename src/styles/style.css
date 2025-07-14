@@ -19,16 +19,16 @@
 .fruitsul {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+gap: 5px;
     list-style: none;
     padding: 0;
-    margin: 0px 30px;
+    margin: 0px 10px;
     justify-content: center;
 }
 
 .fruitsli {
-    width: 12%;
-    text-align: center;
+    width: 135px;
+    /* text-align: center; */
     /* background-color: lightgray; */
     border: 0.5px  solid lightgray;
     border-radius: 5px;
@@ -36,12 +36,12 @@
 }
 
 .txtWeight {
-    width: 100%;
+    width: -webkit-fill-available;
 }
 
 .divWeightInputUnit {
-    margin: 5px 15px;
-    display: flex;
+    /* margin: 5px 15px; */
+    display: inline;
     flex-direction: row;
     justify-content: center;
     place-items: center;
