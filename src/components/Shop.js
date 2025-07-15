@@ -30,7 +30,7 @@ export default function Shop({shops, cart, total, placeOrder, phone, setPhone })
       <div>{shop?.mobile_number}</div>
       </div>
       <div className="bannerRight">
-        <div style={{width:"50px", justifySelf:"right"}}>
+        <div style={{width:"50px", float:"right"}}>
         <img 
         onClick={()=>{
           setIsOpen(true);
