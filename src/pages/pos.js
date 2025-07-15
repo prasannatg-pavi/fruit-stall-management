@@ -155,13 +155,13 @@ function POS() {
                 <div>
                     <FruitList fruits={fruits} addToCart={addToCart} />
                 </div>
-                <div>
+                {/* <div>
                     <Cart cart={cart} total={total} placeOrder={placeOrder}
                      phone={phone} setPhone={setPhone} />
                     <div>
                         <Receipt ref={receiptRef} cart={cart} total={total} orderNumber={orderNumber} />
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )
