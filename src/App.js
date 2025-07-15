@@ -6,10 +6,16 @@ import './App.css';
 import POS from './pages/pos';
 
 const TARGET_LOCATION = {
-  lat: 12.780955, // Replace with your target latitude
-  lon: 79.152671 // Replace with your target longitude
+  lat: 12.484608, // Replace with your target latitude
+  lon: 79.888384 // Replace with your target longitude
 };
-const MAX_DISTANCE_KM = 80; // Set allowed radius (e.g., 10 km)
+
+// const TARGET_LOCATION = {
+//   lat: 12.780955, // Replace with your target latitude
+//   lon: 79.152671 // Replace with your target longitude
+// };
+// 10.780975, 79.152673
+const MAX_DISTANCE_KM = 0.1; // Set allowed radius (e.g., 10 km)
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in km
@@ -27,6 +33,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 
 function App() {
   const [allowed, setAllowed] = useState(null);
+  const [yourCalculatedDistance, setYourCalculatedDistance] = useState(null);
 
   useEffect(() => {
   navigator.geolocation.getCurrentPosition(
@@ -43,8 +50,10 @@ function App() {
         TARGET_LOCATION.lon
       );
 
+
+setYourCalculatedDistance(distance)
       // 🟡 Log calculated distance
-      console.log("Distance from target (km):", distance);
+      console.log("Distance from target (km):", (Math.round(distance * 1000) / 1000) );
 setAllowed((Math.round(distance * 1000) / 1000) <= MAX_DISTANCE_KM)
       // setAllowed(distance <= MAX_DISTANCE_KM);
     },
@@ -52,7 +61,9 @@ setAllowed((Math.round(distance * 1000) / 1000) <= MAX_DISTANCE_KM)
       console.error("Geolocation error:", error);
       setAllowed(false);
     },
-    { timeout: 10000 }
+    { enableHighAccuracy: true, // 🔹 Add this
+    timeout: 10000,
+    maximumAge: 0 }
   );
 }, []);
   //   useEffect(() => {
@@ -74,7 +85,7 @@ setAllowed((Math.round(distance * 1000) / 1000) <= MAX_DISTANCE_KM)
   // }, []);
 
   if (allowed === null) return <p>Checking location...</p>;
-  if (!allowed) return <p>Access Denied: Not in allowed location.</p>;
+  if (!allowed) return <p>Access Denied: Not in allowed location. Far from {yourCalculatedDistance}</p>;
 
 
   return (
