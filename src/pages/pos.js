@@ -143,19 +143,21 @@ function POS() {
     }
     const sendWhatsApp = (order) => {
         const items = cart.map(item => `${item.name} x ${item.qty}`).join('%0A')
-        const message = `**Fruit Stall Bill** %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}`
+        const message = `*Fruit Stall Bill* %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}`
         const url = `https://wa.me/${phone}?text=${message}`
         window.open(url, '_blank')
     }
     return (
         <div style={{ margin: 0 }}>
-            <Shop shops={shops} />
+            <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
+                     phone={phone} setPhone={setPhone}/>
             <div>
                 <div>
                     <FruitList fruits={fruits} addToCart={addToCart} />
                 </div>
                 <div>
-                    <Cart cart={cart} total={total} placeOrder={placeOrder} phone={phone} setPhone={setPhone} />
+                    <Cart cart={cart} total={total} placeOrder={placeOrder}
+                     phone={phone} setPhone={setPhone} />
                     <div>
                         <Receipt ref={receiptRef} cart={cart} total={total} orderNumber={orderNumber} />
                     </div>

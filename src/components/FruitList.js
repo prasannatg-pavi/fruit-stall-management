@@ -32,7 +32,7 @@ export default function FruitList({ fruits, addToCart }) {
   };
 
   return (
-    <div>
+    <div className="mainDivWithoutHeader">
       <h2>Fruits</h2>
       <ul className='fruitsul'>
         {fruits.map((fruit, index) => (
@@ -52,8 +52,13 @@ export default function FruitList({ fruits, addToCart }) {
                 />
               </div>
 
-              <div style={{ flex: 0.5 }}>
-                <select
+              <div style={{ flex: 0.5,
+                    display: "flex",
+    justifyContent: "space-around",
+    margin: " 10px 5px"
+               }}>
+                <div>
+<select
                   value={weights[index]?.unit || 'gm'}
                   onChange={(e) => handleUnitChange(index, e)}
                 >
@@ -61,12 +66,19 @@ export default function FruitList({ fruits, addToCart }) {
                     <option key={i} value={unit}>{unit}</option>
                   ))}
                 </select>
+                </div>
+                
+                <div>
+                  <div 
+                  // style={{ marginTop: "10px" }}
+                  >
+              <button onClick={() => handleAddToCart(fruit, index)}>Add</button>
+            </div>
+                </div>
               </div>
             </div>
 
-            <div style={{ marginTop: "10px" }}>
-              <button onClick={() => handleAddToCart(fruit, index)}>Add</button>
-            </div>
+            
           </li>
         ))}
       </ul>

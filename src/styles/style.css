@@ -1,17 +1,31 @@
 .bannerArea {
-    background-color: lightyellow;
-    padding: 10px;
+    background-color: darkcyan;
+    color: white;
     display: flex;
     flex-direction: row;
     flex: 1;
+    position: sticky;
+    width: 100%;
+    top: 0;
+    align-items: center;
+}
+
+.mainDivWithoutHeader {
+    margin: 0px 50px;
+    /* margin-top: 80px; */
+
 }
 
 .bannerLeft {
     flex: 0.5;
+    text-align: left;
+    padding: 10px 50px;
 }
 
 .bannerRight {
     flex: 0.5;
+    text-align: right;
+    padding: 10px 50px;
 }
 
 
@@ -19,7 +33,7 @@
 .fruitsul {
     display: flex;
     flex-wrap: wrap;
-gap: 5px;
+    gap: 5px;
     list-style: none;
     padding: 0;
     margin: 0px 10px;
@@ -30,7 +44,7 @@ gap: 5px;
     width: 135px;
     /* text-align: center; */
     /* background-color: lightgray; */
-    border: 0.5px  solid lightgray;
+    border: 0.5px solid lightgray;
     border-radius: 5px;
     padding: 5px;
 }
@@ -45,4 +59,16 @@ gap: 5px;
     flex-direction: row;
     justify-content: center;
     place-items: center;
+}
+
+.cartEncircled {
+        border: 1px solid white;
+    border-radius: 30px;
+    position: absolute;
+    top: 10px;
+    right: 37px;
+    width: 18px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bolder;
 }
