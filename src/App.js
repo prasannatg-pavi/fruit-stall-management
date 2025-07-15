@@ -84,8 +84,8 @@ setAllowed((Math.round(distance * 1000) / 1000) <= MAX_DISTANCE_KM)
   //   );
   // }, []);
 
-  if (allowed === null) return <p>Checking location...</p>;
-  if (!allowed) return <p>Access Denied: Not in allowed location. Far from {yourCalculatedDistance}</p>;
+  // if (allowed === null) return <p>Checking location...</p>;
+  // if (!allowed) return <p>Access Denied: Not in allowed location. Far from {yourCalculatedDistance}</p>;
 
 
   return (
