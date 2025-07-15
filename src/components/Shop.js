@@ -30,14 +30,25 @@ export default function Shop({shops, cart, total, placeOrder, phone, setPhone })
       <div>{shop?.mobile_number}</div>
       </div>
       <div className="bannerRight">
-        <div style={{width:"50px", float:"right"}}>
+        <div style={{display:"flex", float:"right"}}>
+          <div>
         <img 
         onClick={()=>{
           setIsOpen(true);
         }}
-        style={{width:"30px", marginTop:"5px"}} src= {require("../assets/icons/cart_white.webp")} />
+        style={{width:"30px", marginRight:"20px", marginTop:"5px"}} src= {require("../assets/icons/cart_white.webp")} />
         
         <div className="cartEncircled">{cart?.length}</div>
+        
+        </div>
+        <div>
+           <img 
+        onClick={()=>{
+          // setIsOpen(true);
+        }}
+        style={{width:"30px", marginTop:"5px"}} src= {require("../assets/icons/admin.png")} />
+        
+        </div>
         </div>
       </div>
       </div>
