@@ -55,7 +55,9 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
             />
           </div>
         </div>
-        <div onClick={() => { setIsOpen(false) }}>
+        <div onClick={() => { 
+          window.print()
+         }}>
           Close
         </div>
       </Modal>
