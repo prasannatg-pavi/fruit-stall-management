@@ -147,10 +147,15 @@ function POS() {
         const url = `https://wa.me/${phone}?text=${message}`
         window.open(url, '_blank')
     }
+    const removeFromCart = (indexToRemove) => {
+        console.log("removeFromCart" ,indexToRemove)
+        setCart(cart.filter((_, index) => index !== indexToRemove));
+    }
     return (
         <div style={{ margin: 0 }}>
             <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
-                     phone={phone} setPhone={setPhone}/>
+                     phone={phone} setPhone={setPhone} 
+                     removeFromCart = {(index)=>{removeFromCart(index)}}/>
             <div>
                 <div>
                     <FruitList fruits={fruits} addToCart={addToCart} />

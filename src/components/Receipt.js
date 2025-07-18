@@ -5,7 +5,7 @@ import React from 'react'
 const Receipt = React.forwardRef(({ cart, total, orderNumber }, ref) => {
   return (
     <div ref={ref}>
-      <h2>Fruit Stall Receipt</h2>
+      <h2> Receipt</h2>
       <p>Order No: {orderNumber}</p>
       <hr />
       <ul>
