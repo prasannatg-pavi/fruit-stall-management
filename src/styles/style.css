@@ -76,7 +76,7 @@
 
 .ulcart {
 min-height: 300px;
-    height: 500px;
+    height: 350px;
     /* background-color: lightgray; */
     overflow: overlay;
     display: flex;
@@ -89,4 +89,17 @@ min-height: 300px;
 .licart {
     padding: 10px 20px;
     border-bottom: 1px solid lightgray
+}
+
+.modalCartReceipt {
+  display: flex;
+  flex-direction: row; /* default: side by side */
+  gap: 1rem;
+}
+
+/* Mobile View: Stack top-bottom */
+@media (max-width: 768px) {
+  .modalCartReceipt {
+    flex-direction: column !important;
+  }
 }

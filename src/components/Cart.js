@@ -1,6 +1,7 @@
 // :white_tick: :three: Cart.js — Show cart
 export default function Cart({ cart, total, placeOrder, phone, setPhone, removeFromCart }) {
   console.log("item", cart)
+  let sno = 0;
   return (
     <div>
       <h2>Cart</h2>
@@ -16,7 +17,7 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
               alignItems:"center"
             }}>
                <div style={{flex:0.05}}>
-                {++index}
+                {++sno}
               </div>
               <div style={{flex:0.4}}>
 

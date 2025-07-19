@@ -26,6 +26,7 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
       >
         <div 
         onClick={() => { setIsOpen(false) }}
+
         style={{
           width:"fit-content",
           float:"right",
@@ -41,7 +42,9 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
           fontSize:"23px",
           fontWeight:"bold"
         }}>&times;</div>
-        <div style={{
+        <div 
+                className="modalCartReceipt"
+        style={{
           display: "flex",
           flexDirection: "row"
         }}>
