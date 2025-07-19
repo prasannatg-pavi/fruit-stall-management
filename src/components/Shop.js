@@ -46,7 +46,8 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
                 className="modalCartReceipt"
         style={{
           display: "flex",
-          flexDirection: "row"
+          flexDirection: "row",
+          width:"100%"
         }}>
           <div style={{ flex: 0.5 }}>
             <Cart cart={cart} total={total} placeOrder={placeOrder}
