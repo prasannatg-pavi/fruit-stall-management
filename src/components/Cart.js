@@ -35,7 +35,7 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
                   "₹" + (item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1])}
               </div>
               <div style={{flex:0.1}}>
-                <button onClick={()=>removeFromCart(index)}>Remove</button>
+                <button className="btnCartReceipt" onClick={()=>removeFromCart(index)}>Remove</button>
               </div>
             </div>
 

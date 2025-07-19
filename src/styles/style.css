@@ -95,11 +95,20 @@ min-height: 300px;
   display: flex;
   flex-direction: row; /* default: side by side */
   gap: 1rem;
+    font-size: 0.9rem; 
+}
+
+.btnCartReceipt {
+     font-size: 0.9rem; 
 }
 
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
   .modalCartReceipt {
+    font-size: 0.55rem; /* smaller font on mobile */
     flex-direction: column !important;
   }
+  .btnCartReceipt {
+     font-size: 0.55rem; 
+}
 }
