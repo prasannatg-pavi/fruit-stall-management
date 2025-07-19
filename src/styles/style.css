@@ -105,10 +105,10 @@ min-height: 300px;
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
   .modalCartReceipt {
-    font-size: 0.55rem; /* smaller font on mobile */
+    font-size: 0.7rem; /* smaller font on mobile */
     flex-direction: column !important;
   }
   .btnCartReceipt {
-     font-size: 0.55rem; 
+     font-size: 0.7rem; 
 }
 }
