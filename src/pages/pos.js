@@ -6,6 +6,7 @@ import Cart from '../components/Cart'
 import Receipt from '../components/Receipt'
 import { useReactToPrint } from 'react-to-print'
 import Shop from '../components/Shop'
+import { Dock } from 'react-dock'
 function POS() {
     const [fruits, setFruits] = useState([])
     const [shops, setShops] = useState([])
@@ -148,14 +149,73 @@ function POS() {
         window.open(url, '_blank')
     }
     const removeFromCart = (indexToRemove) => {
-        console.log("removeFromCart" ,indexToRemove)
+        console.log("removeFromCart", indexToRemove)
         setCart(cart.filter((_, index) => index !== indexToRemove));
+    }
+
+    const [isAdminDockVisible, setIsAdminDockVisible] = useState(false);
+    const showAdminDock = () => {
+        setIsAdminDockVisible(true)
     }
     return (
         <div style={{ margin: 0 }}>
+            <Dock dimMode='opaque'
+                dockStyle={{ boxShadow: "0px 0px 10px darkcyan" }}
+                position='right' isVisible={isAdminDockVisible}>
+                {/* you can pass a function as a child here */}
+                <div style={{
+                    display: "flex",
+                    float: "right",
+                    margin: "30px",
+                    // textDecoration: "underline",
+                    textTransform: "uppercase",
+                    fontWeight: "bolder",
+                    cursor: "pointer",
+                }} onClick={() => { setIsAdminDockVisible(false) }}>Close</div>
+
+                <div style={{ marginTop: "100px", display: "flex", alignItems: "center", flexDirection: "column", }}>
+                    <div style={{ fontWeight: "bolder" }}>
+                        Login to Admin
+                    </div>
+                    <div style={{ border: "1px solid darkcyan", marginTop: "125px", boxShadow: "0px 40px 100px darkcyan", padding: "20px", width: "60%", borderRadius: "10px", textAlign: "-webkit-center" }}>
+                        <div>
+                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}> Mobile number</span>
+                            <div>
+                                <input maxLength={10} style={{ textAlign: "center" }} />
+                            </div>
+                            <div style={{ marginTop: "8px", fontSize: "0.8em" }}>
+                                <button>Send OTP</button>
+                            </div>
+                        </div>
+                        <div style={{ height: "1px", marginTop: "15px", opacity: "0.5", backgroundColor: "darkcyan" }}>
+
+                        </div>
+                        <div style={{ marginTop: "10px" }}>
+                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>OTP</span>
+                            <div>
+                                <input style={{ textAlign: "center" }} />
+                            </div>
+                        </div>
+                        <div style={{ marginTop: "10px" }}>
+                            <div>
+                                <button>LOGIN</button>
+                            </div>
+                        </div>
+                        {/* <div style={{ marginTop: "10px", textAlign: "left", fontSize: "0.75em", color: "darkcyan" }}>
+                            <div>
+                                OTP sent !!
+                            </div>
+                        </div> */}
+                    </div>
+                    <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
+                        Conact Support
+                    </div>
+                </div>
+            </Dock>
             <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
-                     phone={phone} setPhone={setPhone} 
-                     removeFromCart = {(index)=>{removeFromCart(index)}}/>
+                phone={phone} setPhone={setPhone}
+                removeFromCart={(index) => { removeFromCart(index) }}
+                showAdminDock={() => showAdminDock()} />
             <div>
                 <div>
                     <FruitList fruits={fruits} addToCart={addToCart} />

@@ -59,6 +59,7 @@ export default function FruitList({ fruits, addToCart }) {
                }}>
                 <div>
 <select
+className='commonButtonStyle'
                   value={weights[index]?.unit || 'gm'}
                   onChange={(e) => handleUnitChange(index, e)}
                 >
@@ -72,7 +73,9 @@ export default function FruitList({ fruits, addToCart }) {
                   <div 
                   // style={{ marginTop: "10px" }}
                   >
-              <button onClick={() => handleAddToCart(fruit, index)}>Add</button>
+              <button
+              className="commonButtonStyle"
+onClick={() => handleAddToCart(fruit, index)}>Add</button>
             </div>
                 </div>
               </div>

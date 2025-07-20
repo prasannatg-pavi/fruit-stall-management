@@ -6,7 +6,7 @@ import Modal from 'react-modal';
 import Receipt from "./Receipt";
 import { useReactToPrint } from "react-to-print";
 // :white_tick: :three: Cart.js — Show cart
-export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, removeFromCart }) {
+export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, removeFromCart, showAdminDock }) {
   let shop = shops[0]
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -39,7 +39,7 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
           // placeContent:"center",
           backgroundColor:"red",
           color:"white",
-          fontSize:"23px",
+          fontSize:"19px",
           fontWeight:"bold"
         }}>&times;</div>
         <div 
@@ -84,9 +84,9 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
             </div>
             <div>
               <img
-                onClick={() => {
-                  // setIsOpen(true);
-                }}
+                onClick={
+                  showAdminDock
+                }
                 style={{ width: "30px", marginTop: "5px" }} src={require("../assets/icons/admin.png")} />
 
             </div>

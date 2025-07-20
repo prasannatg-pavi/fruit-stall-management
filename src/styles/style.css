@@ -8,12 +8,23 @@
     width: 100%;
     top: 0;
     align-items: center;
+    box-shadow: 0px 0px 20px darkcyan;
 }
 
 .mainDivWithoutHeader {
     margin: 0px 50px;
     /* margin-top: 80px; */
 
+}
+
+.commonButtonStyle {
+    font-weight: bolder;
+    background-color: darkcyan;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-size: 0.65em;
+    text-transform: uppercase;
 }
 
 .bannerLeft {
@@ -37,7 +48,7 @@
     list-style: none;
     padding: 0;
     margin: 0px 10px;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .fruitsli {
@@ -75,7 +86,7 @@
 }
 
 .ulcart {
-min-height: 300px;
+    min-height: 300px;
     height: 350px;
     /* background-color: lightgray; */
     overflow: overlay;
@@ -92,23 +103,26 @@ min-height: 300px;
 }
 
 .modalCartReceipt {
-  display: flex;
-  flex-direction: row; /* default: side by side */
-  gap: 1rem;
-    font-size: 0.9rem; 
+    display: flex;
+    flex-direction: row;
+    /* default: side by side */
+    gap: 1rem;
+    font-size: 0.9rem;
 }
 
 .btnCartReceipt {
-     font-size: 0.9rem; 
+    font-size: 0.9rem;
 }
 
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
-  .modalCartReceipt {
-    font-size: 0.7rem; /* smaller font on mobile */
-    flex-direction: column !important;
-  }
-  .btnCartReceipt {
-     font-size: 0.7rem; 
-}
+    .modalCartReceipt {
+        font-size: 0.7rem;
+        /* smaller font on mobile */
+        flex-direction: column !important;
+    }
+
+    .btnCartReceipt {
+        font-size: 0.7rem;
+    }
 }
