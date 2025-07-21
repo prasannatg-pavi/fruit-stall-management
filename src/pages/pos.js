@@ -220,7 +220,7 @@ function POS() {
                             </div>
                             <div style={{ border: "1px solid darkcyan", marginTop: "50px", boxShadow: "0px 40px 100px darkcyan", padding: "20px", width: "60%", borderRadius: "10px", textAlign: "-webkit-center" }}>
                                 <div>
-                                    <span style={{ fontSize: "0.8em", textAlign: "left", fontWeight: "bolder" }}> Mail ID</span>
+                                    <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}> Mail ID</span>
                                     <div>
                                         <input disabled={true} value={emailToLogin} maxLength={10} style={{ textAlign: "center" }} />
                                     </div>
