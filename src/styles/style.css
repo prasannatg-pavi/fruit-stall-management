@@ -114,6 +114,21 @@
     font-size: 0.9rem;
 }
 
+
+.adminLoggedInMenuTitle {
+        font-weight: bolder;
+    text-align: center;
+    margin: 10px 0px;
+    color: darkcyan;
+}
+.adminLoggedInMenu {
+    display: flex;
+    flex-direction: column;
+}
+
+.adminLoggedInMenuList {
+    padding: 5px 40px;
+}
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
     .modalCartReceipt {

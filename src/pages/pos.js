@@ -7,12 +7,17 @@ import Receipt from '../components/Receipt'
 import { useReactToPrint } from 'react-to-print'
 import Shop from '../components/Shop'
 import { Dock } from 'react-dock'
+import { decryptPassword, encryptPassword } from '../aes'
 function POS() {
     const [fruits, setFruits] = useState([])
     const [shops, setShops] = useState([])
     const [cart, setCart] = useState([])
     const [total, setTotal] = useState(0)
     const [phone, setPhone] = useState('')
+    const [emailToLogin, setEmailToLogin] = useState("")
+    const [PasswordToLogin, setPasswordToLogin] = useState("")
+    const [PasswordToLoginEntered, setPasswordToLoginEntered] = useState("")
+    const [isLogin, setisLogin] = useState(false);
     const [orderNumber, setOrderNumber] = useState(null)
     const receiptRef = useRef()
     const handlePrint = useReactToPrint({
@@ -21,6 +26,9 @@ function POS() {
     useEffect(() => {
         fetchFruits()
         fetchShop()
+        console.log(">>")
+
+        // setEmailToLogin(shops?.email)
     }, [])
     const fetchFruits = async () => {
         const { data, error } = await supabase.from('fruits').select('*')
@@ -31,6 +39,14 @@ function POS() {
         const { data, error } = await supabase.from('shops').select('*')
         if (error) console.log(error)
         else setShops(data)
+
+        console.log("ENCCCCC", data)
+        let encryptedPassword = data[0].password;
+        console.log(">>>:::encr ", encryptedPassword)
+
+        console.log(">>>:::", decryptPassword(data[0]?.password))
+        setPasswordToLogin(decryptPassword(data[0]?.password))
+        setEmailToLogin(data[0]?.email)
     }
 
     const convertToGrams = (weightStr) => {
@@ -156,6 +172,7 @@ function POS() {
     const [isAdminDockVisible, setIsAdminDockVisible] = useState(false);
     const showAdminDock = () => {
         setIsAdminDockVisible(true)
+        setPasswordToLoginEntered("")
     }
     return (
         <div style={{ margin: 0 }}>
@@ -166,52 +183,87 @@ function POS() {
                 <div style={{
                     display: "flex",
                     float: "right",
-                    margin: "30px",
+                    margin: "20px",
                     // textDecoration: "underline",
                     textTransform: "uppercase",
                     fontWeight: "bolder",
                     cursor: "pointer",
-                }} onClick={() => { setIsAdminDockVisible(false) }}>Close</div>
+                }} onClick={() => {
+                    setPasswordToLoginEntered("")
+                    setIsAdminDockVisible(false)
+                    setisLogin(false)
+                }}> {isLogin ? "Logout" : "Close"}</div>
 
-                <div style={{ marginTop: "100px", display: "flex", alignItems: "center", flexDirection: "column", }}>
-                    <div style={{ fontWeight: "bolder" }}>
-                        Login to Admin
-                    </div>
-                    <div style={{ border: "1px solid darkcyan", marginTop: "125px", boxShadow: "0px 40px 100px darkcyan", padding: "20px", width: "60%", borderRadius: "10px", textAlign: "-webkit-center" }}>
-                        <div>
-                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}> Mobile number</span>
-                            <div>
-                                <input maxLength={10} style={{ textAlign: "center" }} />
+
+                {isLogin ?
+                    <>
+                        <div style={{ margin: "80px 10px", display: "flex",
+                             flexDirection: "column", }}>
+                            <div className='adminLoggedInMenuList'>
+                                Hi <span style={{fontWeight:"bold"}}> {shops[0]?.admin_name}</span> !!!
                             </div>
-                            <div style={{ marginTop: "8px", fontSize: "0.8em" }}>
+                            <div className='adminLoggedInMenuTitle'>Menu</div>
+                            <div className='adminLoggedInMenu'>
+                            <div className='adminLoggedInMenuList'>Add Fruits</div>
+                            <div className='adminLoggedInMenuList'>Remove Fruits</div>
+                            <div className='adminLoggedInMenuList'>Update Fruits</div>
+                            <div className='adminLoggedInMenuList'>View Orders</div>
+                            <div className='adminLoggedInMenuList'>Reports</div>
+                            </div>
+                            
+                        </div>
+                    </> :
+                    <>
+                        <div style={{ marginTop: "80px", display: "flex", alignItems: "center", flexDirection: "column", }}>
+                            <div style={{ fontWeight: "bolder" }}>
+                                Login to Admin
+                            </div>
+                            <div style={{ border: "1px solid darkcyan", marginTop: "50px", boxShadow: "0px 40px 100px darkcyan", padding: "20px", width: "60%", borderRadius: "10px", textAlign: "-webkit-center" }}>
+                                <div>
+                                    <span style={{ fontSize: "0.8em", textAlign: "left", fontWeight: "bolder" }}> Mail ID</span>
+                                    <div>
+                                        <input disabled={true} value={emailToLogin} maxLength={10} style={{ textAlign: "center" }} />
+                                    </div>
+                                    {/* <div style={{ marginTop: "8px", fontSize: "0.8em" }}>
                                 <button>Send OTP</button>
-                            </div>
-                        </div>
-                        <div style={{ height: "1px", marginTop: "15px", opacity: "0.5", backgroundColor: "darkcyan" }}>
+                            </div> */}
+                                </div>
+                                {/* <div style={{ height: "1px", marginTop: "15px", opacity: "0.5", backgroundColor: "darkcyan" }}>
 
-                        </div>
-                        <div style={{ marginTop: "10px" }}>
-                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>OTP</span>
-                            <div>
-                                <input style={{ textAlign: "center" }} />
-                            </div>
-                        </div>
-                        <div style={{ marginTop: "10px" }}>
-                            <div>
-                                <button>LOGIN</button>
-                            </div>
-                        </div>
-                        {/* <div style={{ marginTop: "10px", textAlign: "left", fontSize: "0.75em", color: "darkcyan" }}>
+                        </div> */}
+                                <div style={{ marginTop: "10px" }}>
+                                    <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>Password</span>
+                                    <div>
+                                        <input type="password"
+                                            value={PasswordToLoginEntered}
+                                            onChange={(e) => { setPasswordToLoginEntered(e.target.value) }}
+                                            style={{ textAlign: "center" }} />
+                                    </div>
+                                </div>
+                                <div
+                                    style={{ marginTop: "10px" }}>
+                                    <div style={PasswordToLogin == PasswordToLoginEntered
+                                        ? { marginTop: "10px" } : { marginTop: "10px", display: "none" }}>
+                                        <button
+                                            onClick={() => {
+                                                setPasswordToLoginEntered("")
+                                                setisLogin(true)
+                                            }}
+                                        >LOGIN</button>
+                                    </div>
+                                </div>
+                                {/* <div style={{ marginTop: "10px", textAlign: "left", fontSize: "0.75em", color: "darkcyan" }}>
                             <div>
                                 OTP sent !!
                             </div>
                         </div> */}
-                    </div>
-                    <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
-                        Conact Support
-                    </div>
-                </div>
-            </Dock>
+                            </div>
+                            <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
+                                Conact Support
+                            </div>
+                        </div></>}
+
+            </Dock >
             <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
                 phone={phone} setPhone={setPhone}
                 removeFromCart={(index) => { removeFromCart(index) }}
@@ -228,7 +280,7 @@ function POS() {
                     </div>
                 </div> */}
             </div>
-        </div>
+        </div >
     )
 }
 export default POS
