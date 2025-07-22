@@ -200,8 +200,11 @@ function POS() {
                 return <>
                     <div>Update Fruit</div>
                     <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
-                </>; default:
-                return null;
+                </>;
+             default:
+                return <>
+                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
+                </>;
         }
     };
     return (
