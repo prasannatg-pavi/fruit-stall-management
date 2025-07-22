@@ -6,6 +6,7 @@ import Cart from '../components/Cart'
 import Receipt from '../components/Receipt'
 import { useReactToPrint } from 'react-to-print'
 import Shop from '../components/Shop'
+import Modal from 'react-modal';
 import { Dock } from 'react-dock'
 import { decryptPassword, encryptPassword } from '../aes'
 function POS() {
@@ -26,25 +27,26 @@ function POS() {
     useEffect(() => {
         fetchFruits()
         fetchShop()
-        console.log(">>")
-
-        // setEmailToLogin(shops?.email)
     }, [])
+
     const fetchFruits = async () => {
         const { data, error } = await supabase.from('fruits').select('*')
+            .eq("is_visible", true)
+            .eq("is_deleted", false)
         if (error) console.log(error)
         else setFruits(data)
     }
+
     const fetchShop = async () => {
         const { data, error } = await supabase.from('shops').select('*')
+
         if (error) console.log(error)
         else setShops(data)
 
-        console.log("ENCCCCC", data)
-        let encryptedPassword = data[0].password;
-        console.log(">>>:::encr ", encryptedPassword)
+        // let encryptedPassword = data[0].password;
+        // console.log(">>>:::encr ", encryptedPassword)
+        // console.log(">>>:::", decryptPassword(data[0]?.password))
 
-        console.log(">>>:::", decryptPassword(data[0]?.password))
         setPasswordToLogin(decryptPassword(data[0]?.password))
         setEmailToLogin(data[0]?.email)
     }
@@ -62,17 +64,12 @@ function POS() {
 
     const addToCart = fruit => {
         const exists = cart.find(item => item.id === fruit.id);
-
-        console.log(fruit, '-------');
-
         // Extract numeric weight (e.g., 200 from "200gm")
         const weightMatch = fruit.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
         if (!weightMatch) return; // skip if weight format is invalid
-        console.log(weightMatch);
 
         const newWeightValue = parseFloat(weightMatch[1]);
         const unit = weightMatch[2];
-        console.log(newWeightValue, "----------------", unit);
 
         if (exists) {
             setCart(cart.map(item => {
@@ -104,6 +101,10 @@ function POS() {
         //   setTotal(total + (unit == "gm" ?  (fruit.price * newWeightValue) / 1000 : (fruit.price * newWeightValue)));
     };
 
+    const removeFromCart = (indexToRemove) => {
+        setCart(cart.filter((_, index) => index !== indexToRemove));
+    }
+
     useEffect(() => {
         let totalPrice = 0;
         let totalWeightInGrams = 0;
@@ -134,6 +135,8 @@ function POS() {
         console.log("pricePerGram", pricePerGram)
         setTotal(totalPrice)
     }, [cart])
+
+
     const placeOrder = async () => {
         const { data: order, error: orderError } = await supabase
             .from('orders')
@@ -158,15 +161,12 @@ function POS() {
         setTotal(0)
         setPhone('')
     }
+
     const sendWhatsApp = (order) => {
         const items = cart.map(item => `${item.name} x ${item.qty}`).join('%0A')
         const message = `*Fruit Stall Bill* %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}`
         const url = `https://wa.me/${phone}?text=${message}`
         window.open(url, '_blank')
-    }
-    const removeFromCart = (indexToRemove) => {
-        console.log("removeFromCart", indexToRemove)
-        setCart(cart.filter((_, index) => index !== indexToRemove));
     }
 
     const [isAdminDockVisible, setIsAdminDockVisible] = useState(false);
@@ -174,10 +174,53 @@ function POS() {
         setIsAdminDockVisible(true)
         setPasswordToLoginEntered("")
     }
+
+    const [AdminModalIsopen, setAdminModalIsopen] = useState(false);
+    const [AdminModalContent, setAdminModalContent] = useState("")
+    const showMContentForAdminPurpose = (menuItem) => {
+        setAdminModalIsopen(true)
+        setAdminModalContent(menuItem)
+        setisLogin(false)
+        setPasswordToLoginEntered("")
+        setIsAdminDockVisible(false)
+    }
+    const renderModalContent = () => {
+        switch (AdminModalContent) {
+            case "ADD_FRUIT":
+                return <>
+                    <div>ADD Fruit</div>
+                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
+                </>;
+            case "REMOVE_FRUIT":
+                return <>
+                    <div>REMOVE Fruit</div>
+                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
+                </>;
+            case "UPDATE_FRUIT":
+                return <>
+                    <div>Update Fruit</div>
+                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
+                </>; default:
+                return null;
+        }
+    };
     return (
         <div style={{ margin: 0 }}>
+            <Modal
+                style={{ zIndex: 1 }}
+                isOpen={AdminModalIsopen}
+                // onAfterOpen={afterOpenModal}
+                // onRequestClose={closeModal}
+                // style={customStyles}
+                contentLabel="Example Modal"
+            >
+                {renderModalContent()}
+            </Modal>
             <Dock dimMode='opaque'
-                dockStyle={{ boxShadow: "0px 0px 10px darkcyan" }}
+                dockStyle={{
+                    boxShadow: "0px 0px 10px darkcyan",
+                    zIndex: 0
+                }}
                 position='right' isVisible={isAdminDockVisible}>
                 {/* you can pass a function as a child here */}
                 <div style={{
@@ -197,20 +240,22 @@ function POS() {
 
                 {isLogin ?
                     <>
-                        <div style={{ margin: "80px 10px", display: "flex",
-                             flexDirection: "column", }}>
+                        <div style={{
+                            margin: "80px 10px", display: "flex",
+                            flexDirection: "column",
+                        }}>
                             <div className='adminLoggedInMenuList'>
-                                Hi <span style={{fontWeight:"bold"}}> {shops[0]?.admin_name}</span> !!!
+                                Hi <span style={{ fontWeight: "bold" }}> {shops[0]?.admin_name}</span> !!!
                             </div>
                             <div className='adminLoggedInMenuTitle'>Menu</div>
                             <div className='adminLoggedInMenu'>
-                            <div className='adminLoggedInMenuList'>Add Fruits</div>
-                            <div className='adminLoggedInMenuList'>Remove Fruits</div>
-                            <div className='adminLoggedInMenuList'>Update Fruits</div>
-                            <div className='adminLoggedInMenuList'>View Orders</div>
-                            <div className='adminLoggedInMenuList'>Reports</div>
+                                <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
+                                <div onClick={() => showMContentForAdminPurpose("REMOVE_FRUIT")} className='adminLoggedInMenuList'>Remove Fruits</div>
+                                <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits</div>
+                                <div onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} className='adminLoggedInMenuList'>View Orders</div>
+                                <div onClick={() => showMContentForAdminPurpose("REPORTS")} className='adminLoggedInMenuList'>Reports</div>
                             </div>
-                            
+
                         </div>
                     </> :
                     <>
@@ -224,13 +269,7 @@ function POS() {
                                     <div>
                                         <input disabled={true} value={emailToLogin} maxLength={10} style={{ textAlign: "center" }} />
                                     </div>
-                                    {/* <div style={{ marginTop: "8px", fontSize: "0.8em" }}>
-                                <button>Send OTP</button>
-                            </div> */}
                                 </div>
-                                {/* <div style={{ height: "1px", marginTop: "15px", opacity: "0.5", backgroundColor: "darkcyan" }}>
-
-                        </div> */}
                                 <div style={{ marginTop: "10px" }}>
                                     <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>Password</span>
                                     <div>
@@ -245,6 +284,7 @@ function POS() {
                                     <div style={PasswordToLogin == PasswordToLoginEntered
                                         ? { marginTop: "10px" } : { marginTop: "10px", display: "none" }}>
                                         <button
+                                            className="btnLogin"
                                             onClick={() => {
                                                 setPasswordToLoginEntered("")
                                                 setisLogin(true)

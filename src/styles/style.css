@@ -116,11 +116,12 @@
 
 
 .adminLoggedInMenuTitle {
-        font-weight: bolder;
+    font-weight: bolder;
     text-align: center;
     margin: 10px 0px;
     color: darkcyan;
 }
+
 .adminLoggedInMenu {
     display: flex;
     flex-direction: column;
@@ -128,7 +129,20 @@
 
 .adminLoggedInMenuList {
     padding: 5px 40px;
+    cursor: pointer;
 }
+
+.btnLogin {
+    background-color: lightcyan;
+    border: 0px;
+    padding: 2px 12px;
+    border-radius: 20px;
+    border: 1px solid darkcyan;
+    font-size: 0.70em;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
     .modalCartReceipt {
