@@ -11,6 +11,7 @@ import { Dock } from 'react-dock'
 import { decryptPassword, encryptPassword } from '../aes'
 function POS() {
     const [fruits, setFruits] = useState([])
+    const [all_fruits, setall_fruits] = useState([])
     const [shops, setShops] = useState([])
     const [cart, setCart] = useState([])
     const [total, setTotal] = useState(0)
@@ -26,6 +27,7 @@ function POS() {
     })
     useEffect(() => {
         fetchFruits()
+        fetchFruitsVisibleFilterExcluded()
         fetchShop()
     }, [])
 
@@ -33,9 +35,18 @@ function POS() {
         const { data, error } = await supabase.from('fruits').select('*')
             .eq("is_visible", true)
             .eq("is_deleted", false)
-             .order('name', { ascending: true });
+            .order('name', { ascending: true });
         if (error) console.log(error)
         else setFruits(data)
+    }
+
+    const fetchFruitsVisibleFilterExcluded = async () => {
+        const { data, error } = await supabase.from('fruits').select('*')
+            // .eq("is_visible", true)
+            .eq("is_deleted", false)
+            .order('name', { ascending: true });
+        if (error) console.log(error)
+        else setall_fruits(data)
     }
 
     const fetchShop = async () => {
@@ -209,18 +220,49 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
+        fetchFruitsVisibleFilterExcluded()
         fetchFruits()
+        setCheckedItems([])
+        console.log('Fruits marked as deleted:', data);
+    }
+
+    const handleHideFruits = async () => {
+        console.log("CHECKED ITEMS ... ", checkedItems)
+        const { data, error } = await supabase
+            .from('fruits')
+            .update({ is_visible: false })
+            .in('id', checkedItems); // array-based filter
+
+        if (error) {
+            console.error('Error deleting fruits:', error.message);
+            return;
+        }
+        fetchFruitsVisibleFilterExcluded()
+        fetchFruits()
+        setCheckedItems([])
+        console.log('Fruits marked as deleted:', data);
+    }
+
+    const handleUnHideFruits = async () => {
+        console.log("CHECKED ITEMS ... ", checkedItems)
+        const { data, error } = await supabase
+            .from('fruits')
+            .update({ is_visible: true })
+            .in('id', checkedItems); // array-based filter
+
+        if (error) {
+            console.error('Error deleting fruits:', error.message);
+            return;
+        }
+        fetchFruitsVisibleFilterExcluded()
+        fetchFruits()
+        setCheckedItems([])
         console.log('Fruits marked as deleted:', data);
     }
 
     const renderModalContent = () => {
         switch (AdminModalContent) {
             case "ADD_FRUIT":
-                return <>
-                    <div>ADD Fruit</div>
-                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
-                </>;
-            case "REMOVE_FRUIT":
                 return <>
                     <div style={{
                         display: "flex",
@@ -229,15 +271,104 @@ function POS() {
                         fontWeight: "bolder",
                         marginBottom: "20px"
                     }}>
-                        <div>REMOVE Fruit</div>
+                        <div>
+                            <span onClick={() => {
+                                setAdminModalIsopen(false)
+                                setAdminModalContent("")
+                                setisLogin(true)
+                                setPasswordToLoginEntered("")
+                                setIsAdminDockVisible(true)
+                                setCheckedItems([])
+                            }}> &lt; </span>
+                            ADD A FRUIT</div>
 
                         <div style={{
                             display: "flex",
                             flexDirection: "row",
                             padding: "0px 20px"
                         }}>
-                            <div style={{ padding: "0px 5px" }} onClick={() => { handleRemoveFruits() }}>REMOVE</div>
-                            <div style={{ padding: "0px 5px" }} onClick={() => {
+
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black"
+                            }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setCheckedItems([])
+                            }}>CLOSE</div>
+                        </div>
+                    </div >
+                </>;
+            case "REMOVE_HIDE_FRUIT":
+                return <>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "0px 15px",
+                        fontWeight: "bolder",
+                        marginBottom: "20px"
+                    }}>
+                        <div>
+                            <span onClick={() => {
+                                setAdminModalIsopen(false)
+                                setAdminModalContent("")
+                                setisLogin(true)
+                                setPasswordToLoginEntered("")
+                                setIsAdminDockVisible(true)
+                                setCheckedItems([])
+                            }}> &lt; </span>
+                            REMOVE / HIDE FRUITS</div>
+
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            padding: "0px 20px"
+                        }}>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid red",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "red"
+                            }} onClick={() => {
+                                handleRemoveFruits()
+                            }}>REMOVE</div>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black"
+                            }} onClick={() => {
+                                handleHideFruits()
+                            }}>HIDE</div>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black"
+                            }} onClick={() => {
+                                handleUnHideFruits()
+                            }}>UNHIDE</div>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black"
+                            }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setCheckedItems([])
                             }}>CLOSE</div>
@@ -246,11 +377,11 @@ function POS() {
                     <div>
                         <ul className='fruitsul'>
                             {
-                                fruits.map((fruit) => {
+                                all_fruits.map((fruit) => {
                                     return (
                                         <label>
 
-                                            <li className='fruitsli' key={fruit.id}>
+                                            <li className={fruit.is_visible ? 'fruitsli' : 'fruitsli_invisible'} key={fruit.id}>
                                                 <input
                                                     type="checkbox"
                                                     checked={checkedItems.includes(fruit.id)}
@@ -329,8 +460,8 @@ function POS() {
                             <div className='adminLoggedInMenuTitle'>Menu</div>
                             <div className='adminLoggedInMenu'>
                                 <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
-                                <div onClick={() => showMContentForAdminPurpose("REMOVE_FRUIT")} className='adminLoggedInMenuList'>Remove Fruits</div>
-                                <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits</div>
+                                <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>Remove / Hide Fruits</div>
+                                <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits Details</div>
                                 <div onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} className='adminLoggedInMenuList'>View Orders</div>
                                 <div onClick={() => showMContentForAdminPurpose("REPORTS")} className='adminLoggedInMenuList'>Reports</div>
                             </div>
