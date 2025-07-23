@@ -33,6 +33,7 @@ function POS() {
         const { data, error } = await supabase.from('fruits').select('*')
             .eq("is_visible", true)
             .eq("is_deleted", false)
+             .order('name', { ascending: true });
         if (error) console.log(error)
         else setFruits(data)
     }
@@ -184,6 +185,34 @@ function POS() {
         setPasswordToLoginEntered("")
         setIsAdminDockVisible(false)
     }
+
+    // State to track which items are checked
+    const [checkedItems, setCheckedItems] = useState([]);
+
+    // Toggle item in checkedItems array
+    const handleCheckboxChange = (item) => {
+        setCheckedItems((prev) =>
+            prev.includes(item)
+                ? prev.filter((i) => i !== item)
+                : [...prev, item]
+        );
+    };
+
+    const handleRemoveFruits = async () => {
+        console.log("CHECKED ITEMS ... ", checkedItems)
+        const { data, error } = await supabase
+            .from('fruits')
+            .update({ is_deleted: true })
+            .in('id', checkedItems); // array-based filter
+
+        if (error) {
+            console.error('Error deleting fruits:', error.message);
+            return;
+        }
+        fetchFruits()
+        console.log('Fruits marked as deleted:', data);
+    }
+
     const renderModalContent = () => {
         switch (AdminModalContent) {
             case "ADD_FRUIT":
@@ -193,15 +222,62 @@ function POS() {
                 </>;
             case "REMOVE_FRUIT":
                 return <>
-                    <div>REMOVE Fruit</div>
-                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "0px 15px",
+                        fontWeight: "bolder",
+                        marginBottom: "20px"
+                    }}>
+                        <div>REMOVE Fruit</div>
+
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            padding: "0px 20px"
+                        }}>
+                            <div style={{ padding: "0px 5px" }} onClick={() => { handleRemoveFruits() }}>REMOVE</div>
+                            <div style={{ padding: "0px 5px" }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setCheckedItems([])
+                            }}>CLOSE</div>
+                        </div>
+                    </div >
+                    <div>
+                        <ul className='fruitsul'>
+                            {
+                                fruits.map((fruit) => {
+                                    return (
+                                        <label>
+
+                                            <li className='fruitsli' key={fruit.id}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={checkedItems.includes(fruit.id)}
+                                                    onChange={() => handleCheckboxChange(fruit.id)}
+                                                />
+                                                <div style={{ fontWeight: "bold" }}>{fruit.name} </div>
+                                                <div style={{ marginBottom: "10px" }}>
+                                                    <span style={{ fontSize: "14px" }}> ₹{fruit.price} </span>
+                                                    <br />
+                                                    <span style={{ fontSize: "14px" }}> {fruit.stock} gms </span>
+                                                    {/* <span style={{textDecoration:"line-through", fontSize:"12px"}}> ₹{(fruit.price * (1.25)).toFixed(2)} </span> */}
+                                                </div>
+                                            </li>
+                                        </label>
+
+                                    )
+                                })
+                            }
+                        </ul>
+                    </div>
                 </>;
             case "UPDATE_FRUIT":
                 return <>
                     <div>Update Fruit</div>
                     <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
                 </>;
-             default:
+            default:
                 return <>
                     <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
                 </>;
