@@ -36,12 +36,16 @@ export default function FruitList({ fruits, addToCart }) {
       <h2>Fruits</h2>
       <ul className='fruitsul'>
         {fruits.map((fruit, index) => (
-          <li className='fruitsli' key={fruit.id}>
-            <div style={{fontWeight:"bold"}}>{fruit.name} </div>
-            <div style={{marginBottom:"10px"}}> 
-              <span style={{fontWeight:"bold", fontSize:"16px"}}> ₹{fruit.price} </span>
-              <span style={{textDecoration:"line-through", fontSize:"12px"}}> ₹{(fruit.price * (1.25)).toFixed(2)} </span>
-              </div>
+          <li title={fruit.name} className='fruitsli' key={fruit.id}>
+            <div style={{
+              fontWeight: "bold", whiteSpace: "nowrap",/* Prevents the text from wrapping */
+              overflow: "hidden",           /* Hides the overflow */
+              textOverflow: "ellipsis"
+            }}>{fruit.name} </div>
+            <div style={{ marginBottom: "10px" }}>
+              <span style={{ fontWeight: "bold", fontSize: "16px" }}> ₹{fruit.price} </span>
+              <span style={{ textDecoration: "line-through", fontSize: "12px" }}> ₹{(fruit.price * (1.25)).toFixed(2)} </span>
+            </div>
             <div className='divWeightInputUnit'>
               <div style={{ flex: 0.5 }}>
                 <input
@@ -52,36 +56,37 @@ export default function FruitList({ fruits, addToCart }) {
                 />
               </div>
 
-              <div style={{ flex: 0.5,
-                    display: "flex",
-    justifyContent: "space-around",
-    margin: " 10px 5px"
-               }}>
+              <div style={{
+                flex: 0.5,
+                display: "flex",
+                justifyContent: "space-around",
+                margin: " 10px 5px"
+              }}>
                 <div>
-<select
-className='commonButtonStyle'
-                  value={weights[index]?.unit || 'gm'}
-                  onChange={(e) => handleUnitChange(index, e)}
-                >
-                  {weightUnits.map((unit, i) => (
-                    <option key={i} value={unit}>{unit}</option>
-                  ))}
-                </select>
+                  <select
+                    className='commonButtonStyle'
+                    value={weights[index]?.unit || 'gm'}
+                    onChange={(e) => handleUnitChange(index, e)}
+                  >
+                    {weightUnits.map((unit, i) => (
+                      <option key={i} value={unit}>{unit}</option>
+                    ))}
+                  </select>
                 </div>
-                
+
                 <div>
-                  <div 
+                  <div
                   // style={{ marginTop: "10px" }}
                   >
-              <button
-              className="commonButtonStyle"
-onClick={() => handleAddToCart(fruit, index)}>Add</button>
-            </div>
+                    <button
+                      className="commonButtonStyle"
+                      onClick={() => handleAddToCart(fruit, index)}>Add</button>
+                  </div>
                 </div>
               </div>
             </div>
 
-            
+
           </li>
         ))}
       </ul>

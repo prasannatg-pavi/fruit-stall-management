@@ -50,14 +50,25 @@
     margin: 0px 10px;
     justify-content: center;
 }
+
 .fruitsli_invisible {
-      width: 135px;
+    width: 135px;
     /* text-align: center; */
     background-color: lightgray;
     border: 0.5px solid lightgray;
     border-radius: 5px;
     padding: 5px;
 }
+
+.addFruitFieldRow {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    width: 25%;
+    align-self: center;
+    margin:10px 30px; 
+}
+
 .fruitsli {
     width: 135px;
     /* text-align: center; */
