@@ -36,7 +36,7 @@ export default function FruitList({ fruits, addToCart }) {
       <h2>Fruits</h2>
       <ul className='fruitsul'>
         {fruits.map((fruit, index) => (
-          <li title={fruit.name} className='fruitsli' key={fruit.id}>
+          <li className='fruitsli' key={fruit.id}>
             <div style={{
               fontWeight: "bold", whiteSpace: "nowrap",/* Prevents the text from wrapping */
               overflow: "hidden",           /* Hides the overflow */
