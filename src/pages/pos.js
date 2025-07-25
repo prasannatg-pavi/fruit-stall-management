@@ -22,6 +22,11 @@ function POS() {
     const [isLogin, setisLogin] = useState(false);
     const [orderNumber, setOrderNumber] = useState(null)
     const receiptRef = useRef()
+    const [newFruit, setNewFruit] = useState({
+        name: '',
+        price: '',
+        stock: '',
+    });
     const handlePrint = useReactToPrint({
         content: () => receiptRef.current
     })
@@ -209,6 +214,30 @@ function POS() {
         );
     };
 
+    const handleAddFruits = async () => {
+        const { data, error } = await supabase
+            .from('fruits')
+            .insert([
+                {
+                    name: newFruit.name,
+                    price: newFruit.price.toString(),
+                    stock: newFruit.stock.toString(),
+                    // created_at: Date.now(), // ISO string or JS Date
+                    is_deleted: false, // default value if needed
+                    is_visible: true,  // default value if needed
+                }
+            ]);
+
+        if (error) {
+            console.error('Error inserting fruit:', error.message);
+            return null;
+        }
+        setNewFruit({ name: "", price: "", stock: "" })
+        fetchFruits();
+        fetchAllFruits();
+        console.log('Inserted fruit:', data);
+        //   return data;
+    }
     const handleRemoveFruits = async () => {
         console.log("CHECKED ITEMS ... ", checkedItems)
         const { data, error } = await supabase
@@ -260,7 +289,12 @@ function POS() {
         console.log('Fruits marked as deleted:', data);
     }
 
+    const fetchAllFruits = () => {
+         fetchFruitsVisibleFilterExcluded()
+        fetchFruits()
+    }
     const renderModalContent = () => {
+       
         switch (AdminModalContent) {
             case "ADD_FRUIT":
                 return <>
@@ -272,13 +306,14 @@ function POS() {
                         marginBottom: "20px"
                     }}>
                         <div>
-                            <span onClick={() => {
+                            <span style={{ cursor: "pointer" }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setAdminModalContent("")
                                 setisLogin(true)
                                 setPasswordToLoginEntered("")
                                 setIsAdminDockVisible(true)
                                 setCheckedItems([])
+                                fetchAllFruits()
                             }}> &lt; </span>
                             ADD A FRUIT</div>
 
@@ -287,7 +322,6 @@ function POS() {
                             flexDirection: "row",
                             padding: "0px 20px"
                         }}>
-
                             <div style={{
                                 padding: "2px 15px",
                                 border: "1px solid black",
@@ -295,13 +329,58 @@ function POS() {
                                 fontSize: "0.9em",
                                 borderRadius: "20px",
                                 fontWeight: "500",
-                                color: "black"
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={handleAddFruits.bind(this)}>ADD</div>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
                             }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setCheckedItems([])
+                                fetchAllFruits()
                             }}>CLOSE</div>
                         </div>
-                    </div >
+
+                    </div>
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "column"
+                    }}>
+                        <div className="addFruitFieldRow">
+                            <span>Enter Fruit Name </span>
+                            <input type="text" value={newFruit?.name} onChange={(e) => {
+                                setNewFruit((prevFruit) => ({
+                                    ...prevFruit,
+                                    name: e.target.value,
+                                }));
+                            }} />
+                        </div>
+                        <div className="addFruitFieldRow">
+                            <span>Enter Price </span>
+                            <input type="text" value={newFruit?.price} onChange={(e) => {
+                                setNewFruit((prevFruit) => ({
+                                    ...prevFruit,
+                                    price: e.target.value,
+                                }));
+                            }} />
+                        </div>
+                        <div className="addFruitFieldRow">
+                            <span>Enter Stock </span>
+                            <input type="text" value={newFruit?.stock} onChange={(e) => {
+                                setNewFruit((prevFruit) => ({
+                                    ...prevFruit,
+                                    stock: e.target.value,
+                                }));
+                            }} />
+                        </div>
+                    </div>
                 </>;
             case "REMOVE_HIDE_FRUIT":
                 return <>
@@ -313,13 +392,14 @@ function POS() {
                         marginBottom: "20px"
                     }}>
                         <div>
-                            <span onClick={() => {
+                            <span style={{ cursor: "pointer" }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setAdminModalContent("")
                                 setisLogin(true)
                                 setPasswordToLoginEntered("")
                                 setIsAdminDockVisible(true)
                                 setCheckedItems([])
+                                fetchAllFruits()
                             }}> &lt; </span>
                             REMOVE / HIDE FRUITS</div>
 
@@ -371,6 +451,7 @@ function POS() {
                             }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setCheckedItems([])
+                                fetchAllFruits()
                             }}>CLOSE</div>
                         </div>
                     </div >
@@ -387,7 +468,12 @@ function POS() {
                                                     checked={checkedItems.includes(fruit.id)}
                                                     onChange={() => handleCheckboxChange(fruit.id)}
                                                 />
-                                                <div style={{ fontWeight: "bold" }}>{fruit.name} </div>
+                                                <div style={{
+                                                    fontWeight: "bold",
+                                                    whiteSpace: "nowrap",/* Prevents the text from wrapping */
+                                                    overflow: "hidden",           /* Hides the overflow */
+                                                    textOverflow: "ellipsis"
+                                                }}>{fruit.name} </div>
                                                 <div style={{ marginBottom: "10px" }}>
                                                     <span style={{ fontSize: "14px" }}> ₹{fruit.price} </span>
                                                     <br />
