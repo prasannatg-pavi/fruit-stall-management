@@ -364,7 +364,7 @@ function POS() {
                         </div>
                         <div className="addFruitFieldRow">
                             <span>Enter Price </span>
-                            <input type="text" value={newFruit?.price} onChange={(e) => {
+                            <input type="text" maxLength={5} value={newFruit?.price} onChange={(e) => {
                                 setNewFruit((prevFruit) => ({
                                     ...prevFruit,
                                     price: e.target.value,
@@ -373,7 +373,7 @@ function POS() {
                         </div>
                         <div className="addFruitFieldRow">
                             <span>Enter Stock </span>
-                            <input type="text" value={newFruit?.stock} onChange={(e) => {
+                            <input type="text" maxLength={5} value={newFruit?.stock} onChange={(e) => {
                                 setNewFruit((prevFruit) => ({
                                     ...prevFruit,
                                     stock: e.target.value,

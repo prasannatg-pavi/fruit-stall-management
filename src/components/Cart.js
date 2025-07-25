@@ -1,3 +1,5 @@
+import { QRCodeCanvas } from "qrcode.react";
+
 // :white_tick: :three: Cart.js — Show cart
 export default function Cart({ cart, total, placeOrder, phone, setPhone, removeFromCart }) {
   console.log("item", cart)
@@ -50,6 +52,14 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
         onChange={e => setPhone(e.target.value)}
       />
       <button onClick={placeOrder}>Place Order</button>
+       <div style={{ textAlign: 'center' }}>
+      <h3>Scan to Pay with UPI</h3>
+      <QRCodeCanvas
+        value={`upi://pay?pa=tgprasanna12-1@okicici&pn=Prasanna%20TG&am=${total}&cu=INR&tn=FRUIT%20STALL`}
+        size={200}
+        includeMargin={true}
+      />
+    </div>
     </div>
   )
 }
