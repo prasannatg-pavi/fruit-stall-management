@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import Receipt from "./Receipt";
 import { useReactToPrint } from "react-to-print";
+import POSPrinter from "./POSReceipt";
 // :white_tick: :three: Cart.js — Show cart
 export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, removeFromCart, showAdminDock }) {
   let shop = shops[0]
@@ -57,6 +58,9 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
             <Receipt ref={receiptRef} cart={cart} total={total}
             //  orderNumber={orderNumber}
             />
+            {/* <POSPrinter
+             ref={receiptRef}
+             cart={cart} total={total} /> */}
           </div>
         </div>
         <div onClick={() => { 

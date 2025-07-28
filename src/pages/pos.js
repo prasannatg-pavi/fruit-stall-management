@@ -21,6 +21,7 @@ function POS() {
     const [PasswordToLoginEntered, setPasswordToLoginEntered] = useState("")
     const [isLogin, setisLogin] = useState(false);
     const [orderNumber, setOrderNumber] = useState(null)
+    const [selectedFruitToUpdate, setSelectedFruitToUpdate] = useState(null);
     const receiptRef = useRef()
     const [newFruit, setNewFruit] = useState({
         name: '',
@@ -214,6 +215,27 @@ function POS() {
         );
     };
 
+    const handleUpdateFruit = async () => {
+        console.log("FRUIT", newFruit)
+        const { data, error } = await supabase
+            .from("fruits")
+            .update({
+                name: newFruit.name,
+                price: newFruit.price.toString(),
+                stock: newFruit.stock.toString(),
+                is_deleted: false,
+                is_visible: true,
+            })
+            .eq("id", newFruit.id)
+        if (error) {
+            console.error('Error inserting fruit:', error.message);
+            return null;
+        }
+        setNewFruit({ name: "", price: "", stock: "" })
+        fetchFruits();
+        fetchAllFruits();
+        console.log('Inserted fruit:', data);
+    }
     const handleAddFruits = async () => {
         const { data, error } = await supabase
             .from('fruits')
@@ -290,11 +312,11 @@ function POS() {
     }
 
     const fetchAllFruits = () => {
-         fetchFruitsVisibleFilterExcluded()
+        fetchFruitsVisibleFilterExcluded()
         fetchFruits()
     }
     const renderModalContent = () => {
-       
+
         switch (AdminModalContent) {
             case "ADD_FRUIT":
                 return <>
@@ -351,7 +373,9 @@ function POS() {
                     </div>
                     <div style={{
                         display: "flex",
-                        flexDirection: "column"
+                        flexDirection: "column",
+                        width: "75%",
+                        placeSelf: "center"
                     }}>
                         <div className="addFruitFieldRow">
                             <span>Enter Fruit Name </span>
@@ -491,8 +515,129 @@ function POS() {
                 </>;
             case "UPDATE_FRUIT":
                 return <>
-                    <div>Update Fruit</div>
-                    <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "0px 15px",
+                        fontWeight: "bolder",
+                        marginBottom: "20px"
+                    }}>
+                        <div>
+                            <span style={{ cursor: "pointer" }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setAdminModalContent("")
+                                setisLogin(true)
+                                setPasswordToLoginEntered("")
+                                setIsAdminDockVisible(true)
+                                setCheckedItems([])
+                                fetchAllFruits()
+                                setNewFruit({ name: "", price: "", stock: "" })
+                            }}> &lt; </span>
+                            Update Fruit</div>
+
+                        {/* <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div> */}
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            padding: "0px 20px"
+                        }}>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={handleUpdateFruit.bind(this)}>UPDATE</div>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setCheckedItems([])
+                                fetchAllFruits()
+                            }}>CLOSE</div>
+                        </div>
+
+                    </div>
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        margin: "0px 45px"
+                    }}>
+                        <div style={{
+                            padding: "0px 20px",
+                            borderRight: "2px solid darkcyan",
+                            margin: "0px 20px"
+                        }}>
+                            {fruits.map((fruit) => {
+                                return (
+                                    <div style={{
+                                        cursor: "pointer"
+                                    }}
+                                        onClick={(e) => {
+                                            console.log("fruit selected", fruit)
+                                            setNewFruit(fruit)
+                                        }}>
+                                        {fruit.name}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            flex: "1"
+                        }}>
+                            Selected Fruit<br />
+                            <span style={{
+                                fontWeight: "bold",
+                                fontSize: "1.2em"
+                            }}>
+                                {newFruit?.name}
+                            </span>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "column"
+                            }}>
+                                <div className="addFruitFieldRow">
+                                    <span>Enter Fruit Name </span>
+                                    <input type="text" value={newFruit?.name} onChange={(e) => {
+                                        setNewFruit((prevFruit) => ({
+                                            ...prevFruit,
+                                            name: e.target.value,
+                                        }));
+                                    }} />
+                                </div>
+                                <div className="addFruitFieldRow">
+                                    <span>Enter Price </span>
+                                    <input type="text" maxLength={5} value={newFruit?.price} onChange={(e) => {
+                                        setNewFruit((prevFruit) => ({
+                                            ...prevFruit,
+                                            price: e.target.value,
+                                        }));
+                                    }} />
+                                </div>
+                                <div className="addFruitFieldRow">
+                                    <span>Enter Stock </span>
+                                    <input type="text" maxLength={5} value={newFruit?.stock} onChange={(e) => {
+                                        setNewFruit((prevFruit) => ({
+                                            ...prevFruit,
+                                            stock: e.target.value,
+                                        }));
+                                    }} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </>;
             default:
                 return <>
