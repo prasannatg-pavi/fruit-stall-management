@@ -25,36 +25,44 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
         // style={customStyles}
         contentLabel="Example Modal"
       >
-        <div 
-        onClick={() => { setIsOpen(false) }}
+        <div
+          onClick={() => { setIsOpen(false) }}
 
-        style={{
-          width:"fit-content",
-          float:"right",
-          border: "1px solid red",
-          // padding:"10px",
-          borderRadius:"30px",
-          height:"30px",
-          width:"30px",
-          textAlign:"center",
-          // placeContent:"center",
-          backgroundColor:"red",
-          color:"white",
-          fontSize:"19px",
-          fontWeight:"bold"
-        }}>&times;</div>
-        <div 
-                className="modalCartReceipt"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          width:"100%"
-        }}>
-          <div style={{ flex: 0.5 }}>
+          style={{
+            width: "fit-content",
+            cursor: "pointer",
+            float: "right",
+            border: "1px solid red",
+            // padding:"10px",
+            borderRadius: "30px",
+            height: "30px",
+            width: "30px",
+            textAlign: "center",
+            // placeContent:"center",
+            backgroundColor: "red",
+            color: "white",
+            fontSize: "19px",
+            fontWeight: "bold"
+          }}>&times;</div>
+        <div
+          className="modalCartReceipt"
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%"
+          }}>
+          <div style={{
+            flex: 0.5,
+            height: "495px",
+            overflow: "overlay"
+          }}>
             <Cart cart={cart} total={total} placeOrder={placeOrder}
               phone={phone} setPhone={setPhone} removeFromCart={removeFromCart} />
           </div>
-          <div style={{ flex: 0.5 }}>
+          <div style={{
+            flex: 0.5, height: "495px",
+            overflow: "overlay"
+          }}>
             <Receipt ref={receiptRef} cart={cart} total={total}
             //  orderNumber={orderNumber}
             />
@@ -62,11 +70,6 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
              ref={receiptRef}
              cart={cart} total={total} /> */}
           </div>
-        </div>
-        <div onClick={() => { 
-          window.print()
-         }}>
-          Close
         </div>
       </Modal>
       <div className="bannerArea">

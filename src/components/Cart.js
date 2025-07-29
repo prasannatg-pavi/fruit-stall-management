@@ -16,28 +16,37 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
             <div style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems:"center"
+              alignItems: "center"
             }}>
-               <div style={{flex:0.05}}>
+              <div style={{ flex: 0.05 }}>
                 {++sno}
               </div>
-              <div style={{flex:0.4}}>
+              <div style={{ flex: 0.4 }}>
 
                 <span style={{ fontWeight: "bold" }}>{item.name}</span> <br />
                 <span>₹  {item.price} per kg</span> <br />
                 {/* <span>{JSON.stringify(item)}</span> */}
               </div>
-              <div style={{flex:0.1}}>
+              <div style={{ flex: 0.1 }}>
                 {item.weight}
               </div>
-              <div style={{flex:0.1}}>
+              <div style={{ flex: 0.1 }}>
                 {/* {item.name} x {item.weight} = */}
                 {item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[2] == "gm" ?
                   "₹" + ((item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1]) / 1000).toFixed(2) :
                   "₹" + (item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1]).toFixed(2)}
               </div>
-              <div style={{flex:0.1}}>
-                <button className="btnCartReceipt" onClick={()=>removeFromCart(index)}>Remove</button>
+              <div style={{ flex: 0.1 }}>
+                <button
+                  style={{
+                    color: "red",
+                    backgroundColor: "white",
+                    color: "red",
+                    border: "1px solid red",
+                    borderRadius: "10px",
+                    cursor: "pointer"
+                  }}
+                  className="btnCartReceipt" onClick={() => removeFromCart(index)}>Remove</button>
               </div>
             </div>
 
@@ -52,14 +61,14 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
         onChange={e => setPhone(e.target.value)}
       />
       <button onClick={placeOrder}>Place Order</button>
-       <div style={{ textAlign: 'center' }}>
-      <h3>Scan to Pay with UPI</h3>
-      <QRCodeCanvas
-        value={`upi://pay?pa=tgprasanna12-1@okicici&pn=Prasanna%20TG&am=${total}&cu=INR&tn=FRUIT%20STALL`}
-        size={200}
-        includeMargin={true}
-      />
-    </div>
+      <div style={{ textAlign: 'center' }}>
+        <h3>Scan to Pay with UPI</h3>
+        <QRCodeCanvas
+          value={`upi://pay?pa=tgprasanna12-1@okicici&pn=Prasanna%20TG&am=${total}&cu=INR&tn=FRUIT%20STALL`}
+          size={200}
+          includeMargin={true}
+        />
+      </div>
     </div>
   )
 }

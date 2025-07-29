@@ -104,8 +104,8 @@
 }
 
 .ulcart {
-    min-height: 300px;
-    height: 350px;
+    /* min-height: 300px;
+    height: 350px; */
     /* background-color: lightgray; */
     overflow: overlay;
     display: flex;
