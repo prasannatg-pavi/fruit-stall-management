@@ -53,14 +53,14 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
           }}>
           <div style={{
             flex: 0.5,
-            height: "495px",
+            height: "75vh",
             overflow: "overlay"
           }}>
             <Cart cart={cart} total={total} placeOrder={placeOrder}
               phone={phone} setPhone={setPhone} removeFromCart={removeFromCart} />
           </div>
           <div style={{
-            flex: 0.5, height: "495px",
+            flex: 0.5, height: "75vh",
             overflow: "overlay"
           }}>
             <Receipt ref={receiptRef} cart={cart} total={total}

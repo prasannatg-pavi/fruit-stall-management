@@ -28,15 +28,39 @@ function POS() {
         price: '',
         stock: '',
     });
+    const [config, setConfig] = useState({});
     const handlePrint = useReactToPrint({
         content: () => receiptRef.current
     })
     useEffect(() => {
+
+
+        loadConfig()
         fetchFruits()
         fetchFruitsVisibleFilterExcluded()
         fetchShop()
     }, [])
 
+    const loadConfig = async () => {
+        const { data, error } = await supabase
+            .from('config')
+            .select('key, value');
+
+        console.log("DDDDDDDDDDDDDDDDD", data)
+        if (error) {
+            console.error('Error loading config:', error.message);
+            return;
+        }
+
+        // Convert array to key-value object
+        const configObject = data.reduce((acc, { key, value }) => {
+            acc[key] = value;
+            return acc;
+        }, {});
+
+        console.log("conobject", configObject)
+        setConfig(configObject);
+    }
     const fetchFruits = async () => {
         const { data, error } = await supabase.from('fruits').select('*')
             .eq("is_visible", true)
@@ -751,7 +775,7 @@ function POS() {
                 showAdminDock={() => showAdminDock()} />
             <div>
                 <div>
-                    <FruitList fruits={fruits} addToCart={addToCart} />
+                    <FruitList fruits={fruits} addToCart={addToCart} config={config} />
                 </div>
                 {/* <div>
                     <Cart cart={cart} total={total} placeOrder={placeOrder}

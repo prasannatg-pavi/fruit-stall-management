@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-export default function FruitList({ fruits, addToCart }) {
+export default function FruitList({ fruits, addToCart, config }) {
   const weightUnits = ["gm", "kg"];
 
   const [weights, setWeights] = useState([]);
@@ -37,11 +37,15 @@ export default function FruitList({ fruits, addToCart }) {
       <ul className='fruitsul'>
         {fruits.map((fruit, index) => (
           <li title={fruit.name} className='fruitsli' key={fruit.id}>
+           
             <div style={{
               fontWeight: "bold", whiteSpace: "nowrap",/* Prevents the text from wrapping */
               overflow: "hidden",           /* Hides the overflow */
               textOverflow: "ellipsis"
-            }}>{fruit.name} </div>
+            }}>
+               {fruit.stock < config?.minimum_stock ? <span style={{color:"red"}}> &#x25C9; </span> :
+                  fruit.stock < config?.warning_stock ?  <span style={{color:"orange"}}> &#x25C9; </span> : null }
+              {fruit.name} </div>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ fontWeight: "bold", fontSize: "16px" }}> ₹{fruit.price} </span>
               <span style={{ textDecoration: "line-through", fontSize: "12px" }}> ₹{(fruit.price * (1.25)).toFixed(2)} </span>
