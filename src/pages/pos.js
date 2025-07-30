@@ -180,6 +180,46 @@ function POS() {
 
 
     const placeOrder = async () => {
+
+
+        // fetch stock for all ordered fruits
+        const orderedFruitIds = cart.map(c => c.id);
+        const { data: orderedFruits, error: fetchError } = await supabase
+            .from("fruits")
+            .select('id, stock')
+            .in('id', orderedFruitIds)
+
+        console.log("+++++++++++++++==", orderedFruits)
+        // validate all fruits have enough stocks
+        const stockMap = new Map(orderedFruits.map(f => [f.id, f.stock]))
+        console.log("STOCK MAP", stockMap)
+        for (let item of cart) {
+            const available = stockMap.get(item.id)
+            if (available === undefined) {
+                console.log(`Fruit ID ${item.id} not exists`)
+                return;
+            }
+
+            const weightInGrams = item.weight;// convertToGrams(item.weight);
+            let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
+            let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
+            let fruit_unit = fruit_weightMatch[2];
+            console.log("mmmmmmmmmmmmm2", item, fruit_unit == "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue);
+
+            console.log(" ================ ", available, fruit_newWeightValue, item)
+
+            if (available < fruit_newWeightValue) {
+                console.log(`Not enough stock for fruit ID: ${item.id} `)
+                return;
+            }
+            // await supabase.from('order_items').insert([
+            //     {
+            //         order_id: order.id, fruit_id: item.id, quantity: item.qty,
+            //         unit_price: item.price
+            //     }
+            // ])
+        }
+
         const { data: order, error: orderError } = await supabase
             .from('orders')
             .insert([{ total, paid: true, customer_phone: phone }])
@@ -189,19 +229,28 @@ function POS() {
             return
         }
         setOrderNumber(order.order_number)
-        for (let item of cart) {
-            await supabase.from('order_items').insert([
-                {
-                    order_id: order.id, fruit_id: item.id, quantity: item.qty,
-                    unit_price: item.price
-                }
-            ])
-        }
-        handlePrint()
-        sendWhatsApp(order)
+
+        const updates = await Promise.all(
+            cart.map(item => {
+                  const weightInGrams = item.weight;// convertToGrams(item.weight);
+            let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
+            let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
+            let fruit_unit = fruit_weightMatch[2];
+            
+            const stockAvailable =stockMap.get(item.id);
+                const newStock = stockAvailable - ( fruit_unit == "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue);
+                return supabase.from("fruits")
+                .update({'stock': newStock})
+                .eq("id", item.id)
+            })
+        )
+
+        // handlePrint()
+        // sendWhatsApp(order)
         setCart([])
         setTotal(0)
         setPhone('')
+        fetchFruits()
     }
 
     const sendWhatsApp = (order) => {
