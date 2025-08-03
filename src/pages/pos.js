@@ -1005,7 +1005,13 @@ function POS() {
                 showAdminDock={() => showAdminDock()} />
             <div>
                 <div>
-                    <FruitList fruits={fruits} addToCart={addToCart} config={config} />
+                {fruits.length ?  <FruitList fruits={fruits} addToCart={addToCart} config={config} /> : <>
+                <div style={{display:"flex", flexDirection:"column" , justifyContent:"center", alignItems:"center", height:"100vh" }}>
+                <img src={require("../assets/icons/empty_state_fruits.png")}
+                style={{width:"200px", height:"200px"}} />
+                <div style={{marginTop:"10px", fontSize:"0.8em", fontWeight:"bolder"}}>Fruits List is empty</div></div>
+                </> }
+                   
                 </div>
                 {/* <div>
                     <Cart cart={cart} total={total} placeOrder={placeOrder}

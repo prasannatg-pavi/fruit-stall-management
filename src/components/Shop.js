@@ -51,18 +51,22 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
             flexDirection: "row",
             width: "100%"
           }}>
-          <div style={{
+          <div style={cart?.length?{
             flex: 0.5,
+            height: "75vh",
+            overflow: "overlay"
+          }: {
+             flex: 1,
             height: "75vh",
             overflow: "overlay"
           }}>
             <Cart cart={cart} total={total} placeOrder={placeOrder}
               phone={phone} setPhone={setPhone} removeFromCart={removeFromCart} />
           </div>
-          <div style={{
+          <div style={cart?.length?{
             flex: 0.5, height: "75vh",
             overflow: "overlay"
-          }}>
+          }: {display:"none"}}>
             <Receipt ref={receiptRef} cart={cart} total={total}
             //  orderNumber={orderNumber}
             />
