@@ -24,6 +24,7 @@ function POS() {
     const [orderNumber, setOrderNumber] = useState(null)
     const [selectedFruitToUpdate, setSelectedFruitToUpdate] = useState(null);
     const receiptRef = useRef()
+    const [dataLoaded, setDataLoaded] = useState(false);
     const [newFruit, setNewFruit] = useState({
         name: '',
         price: '',
@@ -96,6 +97,7 @@ function POS() {
 
         setPasswordToLogin(decryptPassword(data[0]?.password))
         setEmailToLogin(data[0]?.email)
+        setDataLoaded(true)
     }
 
     const convertToGrams = (weightStr) => {
@@ -1003,7 +1005,7 @@ function POS() {
                 phone={phone} setPhone={setPhone}
                 removeFromCart={(index) => { removeFromCart(index) }}
                 showAdminDock={() => showAdminDock()} />
-            <div>
+                {dataLoaded ?    <div>
                 <div>
                 {fruits.length ?  <FruitList fruits={fruits} addToCart={addToCart} config={config} /> : <>
                 <div style={{display:"flex", flexDirection:"column" , justifyContent:"center", alignItems:"center", height:"100vh" }}>
@@ -1020,7 +1022,13 @@ function POS() {
                         <Receipt ref={receiptRef} cart={cart} total={total} orderNumber={orderNumber} />
                     </div>
                 </div> */}
-            </div>
+            </div> :  <>
+                <div style={{display:"flex", flexDirection:"column" , justifyContent:"center", alignItems:"center", height:"100vh" }}>
+                <img src={require("../assets/icons/loading_1.gif")}
+                style={{width:"200px", height:"200px"}} />
+                </div>
+                </> }
+         
         </div >
     )
 }
