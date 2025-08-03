@@ -9,6 +9,7 @@ import Shop from '../components/Shop'
 import Modal from 'react-modal';
 import { Dock } from 'react-dock'
 import { decryptPassword, encryptPassword } from '../aes'
+import { toast, ToastContainer } from 'react-toastify'
 function POS() {
     const [fruits, setFruits] = useState([])
     const [all_fruits, setall_fruits] = useState([])
@@ -32,6 +33,10 @@ function POS() {
     const handlePrint = useReactToPrint({
         content: () => receiptRef.current
     })
+
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     useEffect(() => {
 
 
@@ -232,16 +237,16 @@ function POS() {
 
         const updates = await Promise.all(
             cart.map(item => {
-                  const weightInGrams = item.weight;// convertToGrams(item.weight);
-            let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
-            let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
-            let fruit_unit = fruit_weightMatch[2];
-            
-            const stockAvailable =stockMap.get(item.id);
-                const newStock = stockAvailable - ( fruit_unit == "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue);
+                const weightInGrams = item.weight;// convertToGrams(item.weight);
+                let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
+                let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
+                let fruit_unit = fruit_weightMatch[2];
+
+                const stockAvailable = stockMap.get(item.id);
+                const newStock = stockAvailable - (fruit_unit == "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue);
                 return supabase.from("fruits")
-                .update({'stock': newStock})
-                .eq("id", item.id)
+                    .update({ 'stock': newStock })
+                    .eq("id", item.id)
             })
         )
 
@@ -288,6 +293,52 @@ function POS() {
         );
     };
 
+    const handleChangePassword = async () => {
+        console.log(">>>>>>>>.. ", shops[0].password, currentPassword, newPassword, confirmPassword);
+        let decryptedPasswordInDb = decryptPassword(shops[0]?.password)
+        console.log(">>>>>>>>.. ", decryptedPasswordInDb, currentPassword, newPassword, confirmPassword);
+
+        if (decryptedPasswordInDb == currentPassword) {
+            if (newPassword == "" || confirmPassword == "") {
+                toast.error("Password should not be empty", {
+                    position: "bottom-right"
+                })
+            }
+            else if (newPassword == confirmPassword) {
+                console.log("Matched", shops, currentPassword, newPassword, confirmPassword)
+                const { data, error } = await supabase.from("shops")
+                    .update({ 'password': encryptPassword(newPassword) })
+                    .eq("id", shops[0].id)
+
+                console.log("datadatadata", data)
+                if (error) {
+                    console.error('Error Changing password:', error.message);
+                    return null;
+                }
+                toast.success("Password has changed successfully", {
+                    position: "bottom-right"
+                })
+                fetchShop()
+
+                setCurrentPassword("")
+                setNewPassword("")
+                setConfirmPassword("")
+            } else {
+                toast.error("New password and Confirm password not matching", {
+                    position: "bottom-right"
+                })
+                console.log("New password and Confirm password not matching")
+            }
+        } else {
+            toast.error("Password not matching with database", {
+                position: "bottom-right"
+            })
+            console.log("Password not matching with Database")
+        }
+        // setPasswordToLogin(decryptPassword(data[0]?.password))
+
+    }
+
     const handleUpdateFruit = async () => {
         console.log("FRUIT", newFruit)
         const { data, error } = await supabase
@@ -304,6 +355,9 @@ function POS() {
             console.error('Error inserting fruit:', error.message);
             return null;
         }
+         toast.success(`Chosen Fruit: ${newFruit.name} had updated successfully`, {
+                    position: "bottom-right"
+                })
         setNewFruit({ name: "", price: "", stock: "" })
         fetchFruits();
         fetchAllFruits();
@@ -327,6 +381,9 @@ function POS() {
             console.error('Error inserting fruit:', error.message);
             return null;
         }
+          toast.success(`New Fruit: ${newFruit.name} had added successfully`, {
+                    position: "bottom-right"
+                })
         setNewFruit({ name: "", price: "", stock: "" })
         fetchFruits();
         fetchAllFruits();
@@ -344,6 +401,9 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
+         toast.success(`Selected fruit/s had removed successfully`, {
+                    position: "bottom-right"
+                })
         fetchFruitsVisibleFilterExcluded()
         fetchFruits()
         setCheckedItems([])
@@ -361,6 +421,9 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
+         toast.success(`Selected fruit/s had hidden successfully`, {
+                    position: "bottom-right"
+                })
         fetchFruitsVisibleFilterExcluded()
         fetchFruits()
         setCheckedItems([])
@@ -378,6 +441,9 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
+         toast.success(`Selected fruit/s had shown successfully`, {
+                    position: "bottom-right"
+                })
         fetchFruitsVisibleFilterExcluded()
         fetchFruits()
         setCheckedItems([])
@@ -511,7 +577,8 @@ function POS() {
                                 fontSize: "0.9em",
                                 borderRadius: "20px",
                                 fontWeight: "500",
-                                color: "red"
+                                color: "red",
+                                cursor:"pointer"
                             }} onClick={() => {
                                 handleRemoveFruits()
                             }}>REMOVE</div>
@@ -522,7 +589,8 @@ function POS() {
                                 fontSize: "0.9em",
                                 borderRadius: "20px",
                                 fontWeight: "500",
-                                color: "black"
+                                color: "black",
+                                cursor:"pointer"
                             }} onClick={() => {
                                 handleHideFruits()
                             }}>HIDE</div>
@@ -533,7 +601,8 @@ function POS() {
                                 fontSize: "0.9em",
                                 borderRadius: "20px",
                                 fontWeight: "500",
-                                color: "black"
+                                color: "black",
+                                cursor:"pointer"
                             }} onClick={() => {
                                 handleUnHideFruits()
                             }}>UNHIDE</div>
@@ -544,7 +613,8 @@ function POS() {
                                 fontSize: "0.9em",
                                 borderRadius: "20px",
                                 fontWeight: "500",
-                                color: "black"
+                                color: "black",
+                                cursor:"pointer"
                             }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setCheckedItems([])
@@ -712,6 +782,108 @@ function POS() {
                         </div>
                     </div>
                 </>;
+            case "CHANGE_PASSWORD":
+                return <>
+                    <div style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        padding: "0px 15px",
+                        fontWeight: "bolder",
+                        marginBottom: "20px"
+                    }}>
+                        <div>
+                            <span style={{ cursor: "pointer" }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setAdminModalContent("")
+                                setisLogin(true)
+                                setPasswordToLoginEntered("")
+                                setIsAdminDockVisible(true)
+                                setCheckedItems([])
+                                fetchAllFruits()
+                                setCurrentPassword("")
+                                setNewPassword("")
+                                setConfirmPassword("")
+                                setNewFruit({ name: "", price: "", stock: "" })
+                            }}> &lt; </span>
+                            Change Password</div>
+
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            padding: "0px 20px"
+                        }}>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={handleChangePassword.bind(this)}>CHANGE PASSWORD</div>
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setCheckedItems([])
+                                fetchAllFruits()
+                                setCurrentPassword("")
+                                setNewPassword("")
+                                setConfirmPassword("")
+                            }}>CLOSE</div>
+                        </div>
+
+                    </div>
+                    <div style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        margin: "0px 45px"
+                    }}>
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            flex: "1"
+                        }}>
+                            <div style={{
+                                display: "flex",
+                                flexDirection: "column"
+                            }}>
+                                <div className="addFruitFieldRow">
+                                    <span>Enter Current Password </span>
+                                    <input type="password"
+                                        value={currentPassword}
+                                        onChange={(e) => {
+                                            setCurrentPassword(e.target.value);
+                                        }} />
+                                </div>
+                                <div className="addFruitFieldRow">
+                                    <span>Enter New Password </span>
+                                    <input type="password"
+                                        value={newPassword}
+                                        onChange={(e) => {
+                                            setNewPassword(e.target.value);
+                                        }} />
+                                </div>
+                                <div className="addFruitFieldRow">
+                                    <span>Confirm Password </span>
+                                    <input type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => {
+                                            setConfirmPassword(e.target.value)
+                                        }} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>;
             default:
                 return <>
                     <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div>
@@ -720,6 +892,8 @@ function POS() {
     };
     return (
         <div style={{ margin: 0 }}>
+            <ToastContainer
+                draggable={true} />
             <Modal
                 style={{ zIndex: 1 }}
                 isOpen={AdminModalIsopen}
@@ -766,8 +940,15 @@ function POS() {
                                 <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
                                 <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>Remove / Hide Fruits</div>
                                 <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits Details</div>
-                                <div onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} className='adminLoggedInMenuList'>View Orders</div>
-                                <div onClick={() => showMContentForAdminPurpose("REPORTS")} className='adminLoggedInMenuList'>Reports</div>
+                                {/* <div 
+                                // onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} 
+                                className='adminLoggedInMenuList comingSoon'>View Orders <span className='comingSoon'>Coming soon... </span></div>
+                                <div 
+                                // onClick={() => showMContentForAdminPurpose("REPORTS")} 
+                                className='adminLoggedInMenuList comingSoon'>Reports <span className='comingSoon'>Coming soon... </span></div> */}
+
+                                <hr/>
+                                <div onClick={() => showMContentForAdminPurpose("CHANGE_PASSWORD")} className='adminLoggedInMenuList'>Change Password</div>
                             </div>
 
                         </div>
