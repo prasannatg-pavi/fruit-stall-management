@@ -64,9 +64,9 @@
     display: flex;
     flex: 1;
     justify-content: space-between;
-    width: 35%;
+    width: 50%;
     align-self: center;
-    margin:10px 30px; 
+    margin: 10px 30px;
 }
 
 .fruitsli {
@@ -167,6 +167,26 @@
     cursor: pointer;
 }
 
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 15px;
+    font-weight: bolder;
+    margin-bottom: 20px;
+}
+
+.modalHeaderButtons {
+    display: flex;
+    flex-direction: row;
+    padding: 0px 20px;
+}
+
+ .updateFruitDiv {
+        display: flex;
+        flex-direction: row;
+        margin: 0px 45px;
+    }
+
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
     .modalCartReceipt {
@@ -178,4 +198,39 @@
     .btnCartReceipt {
         font-size: 0.7rem;
     }
+}
+
+@media (max-width: 760px) {
+    .addFruitFieldRow {
+        display: flex;
+        flex: 1 1;
+        justify-content: space-between;
+        width: 70%;
+        align-self: center;
+        margin: 10px 30px;
+    }
+
+    .modalHeader {
+        display: flex;
+        justify-content: space-between;
+        padding: 0px 15px;
+        font-weight: bolder;
+        margin-bottom: 20px;
+        flex-direction: column !important;
+        justify-content: flex-end !important;
+    }
+
+    .modalHeaderButtons {
+        display: flex;
+        flex-direction: row;
+        padding: 0px 20px;
+        justify-content: flex-end !important;
+    }
+
+    .updateFruitDiv {
+        display: flex;
+        flex-direction: row;
+        margin: 0px 0px;
+    }
+
 }

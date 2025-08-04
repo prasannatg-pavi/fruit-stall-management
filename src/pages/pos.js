@@ -38,6 +38,27 @@ function POS() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+
+    const [isVisible, setIsVisible] = useState(true);
+    const [dockSize, setDockSize] = useState(0.3);
+    const [dockPosition, setDockPosition] = useState('right');
+
+    useEffect(() => {
+        const updateDockLayout = () => {
+            if (window.innerWidth < 950) {
+                setDockSize(1);
+                setDockPosition('left'); // or 'bottom' if you prefer
+            } else {
+                setDockSize(0.3);
+                setDockPosition('right');
+            }
+        };
+
+        updateDockLayout();
+        window.addEventListener('resize', updateDockLayout);
+        return () => window.removeEventListener('resize', updateDockLayout);
+    }, []);
+
     useEffect(() => {
 
 
@@ -357,9 +378,9 @@ function POS() {
             console.error('Error inserting fruit:', error.message);
             return null;
         }
-         toast.success(`Chosen Fruit: ${newFruit.name} had updated successfully`, {
-                    position: "bottom-right"
-                })
+        toast.success(`Chosen Fruit: ${newFruit.name} had updated successfully`, {
+            position: "bottom-right"
+        })
         setNewFruit({ name: "", price: "", stock: "" })
         fetchFruits();
         fetchAllFruits();
@@ -383,9 +404,9 @@ function POS() {
             console.error('Error inserting fruit:', error.message);
             return null;
         }
-          toast.success(`New Fruit: ${newFruit.name} had added successfully`, {
-                    position: "bottom-right"
-                })
+        toast.success(`New Fruit: ${newFruit.name} had added successfully`, {
+            position: "bottom-right"
+        })
         setNewFruit({ name: "", price: "", stock: "" })
         fetchFruits();
         fetchAllFruits();
@@ -403,9 +424,9 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
-         toast.success(`Selected fruit/s had removed successfully`, {
-                    position: "bottom-right"
-                })
+        toast.success(`Selected fruit/s had removed successfully`, {
+            position: "bottom-right"
+        })
         fetchFruitsVisibleFilterExcluded()
         fetchFruits()
         setCheckedItems([])
@@ -423,9 +444,9 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
-         toast.success(`Selected fruit/s had hidden successfully`, {
-                    position: "bottom-right"
-                })
+        toast.success(`Selected fruit/s had hidden successfully`, {
+            position: "bottom-right"
+        })
         fetchFruitsVisibleFilterExcluded()
         fetchFruits()
         setCheckedItems([])
@@ -443,9 +464,9 @@ function POS() {
             console.error('Error deleting fruits:', error.message);
             return;
         }
-         toast.success(`Selected fruit/s had shown successfully`, {
-                    position: "bottom-right"
-                })
+        toast.success(`Selected fruit/s had shown successfully`, {
+            position: "bottom-right"
+        })
         fetchFruitsVisibleFilterExcluded()
         fetchFruits()
         setCheckedItems([])
@@ -461,13 +482,16 @@ function POS() {
         switch (AdminModalContent) {
             case "ADD_FRUIT":
                 return <>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "0px 15px",
-                        fontWeight: "bolder",
-                        marginBottom: "20px"
-                    }}>
+                    <div
+                        className='modalHeader'
+                    //  style={{
+                    //     display: "flex",
+                    //     justifyContent: "space-between",
+                    //     padding: "0px 15px",
+                    //     fontWeight: "bolder",
+                    //     marginBottom: "20px"
+                    // }}
+                    >
                         <div>
                             <span style={{ cursor: "pointer" }} onClick={() => {
                                 setAdminModalIsopen(false)
@@ -480,11 +504,14 @@ function POS() {
                             }}> &lt; </span>
                             ADD A FRUIT</div>
 
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            padding: "0px 20px"
-                        }}>
+                        <div 
+                        className='modalHeaderButtons'
+                        // style={{
+                        //     display: "flex",
+                        //     flexDirection: "row",
+                        //     padding: "0px 20px"
+                        // }}
+                        >
                             <div style={{
                                 padding: "2px 15px",
                                 border: "1px solid black",
@@ -549,13 +576,17 @@ function POS() {
                 </>;
             case "REMOVE_HIDE_FRUIT":
                 return <>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "0px 15px",
-                        fontWeight: "bolder",
-                        marginBottom: "20px"
-                    }}>
+                    <div
+                        className='modalHeader'
+
+                    // style={{
+                    //     display: "flex",
+                    //     justifyContent: "space-between",
+                    //     padding: "0px 15px",
+                    //     fontWeight: "bolder",
+                    //     marginBottom: "20px"
+                    // }}
+                    >
                         <div>
                             <span style={{ cursor: "pointer" }} onClick={() => {
                                 setAdminModalIsopen(false)
@@ -568,11 +599,14 @@ function POS() {
                             }}> &lt; </span>
                             REMOVE / HIDE FRUITS</div>
 
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            padding: "0px 20px"
-                        }}>
+                        <div 
+                        className='modalHeaderButtons'
+                        // style={{
+                        //     display: "flex",
+                        //     flexDirection: "row",
+                        //     padding: "0px 20px"
+                        // }}
+                        >
                             <div style={{
                                 padding: "2px 15px",
                                 border: "1px solid red",
@@ -580,7 +614,7 @@ function POS() {
                                 borderRadius: "20px",
                                 fontWeight: "500",
                                 color: "red",
-                                cursor:"pointer"
+                                cursor: "pointer"
                             }} onClick={() => {
                                 handleRemoveFruits()
                             }}>REMOVE</div>
@@ -592,7 +626,7 @@ function POS() {
                                 borderRadius: "20px",
                                 fontWeight: "500",
                                 color: "black",
-                                cursor:"pointer"
+                                cursor: "pointer"
                             }} onClick={() => {
                                 handleHideFruits()
                             }}>HIDE</div>
@@ -604,7 +638,7 @@ function POS() {
                                 borderRadius: "20px",
                                 fontWeight: "500",
                                 color: "black",
-                                cursor:"pointer"
+                                cursor: "pointer"
                             }} onClick={() => {
                                 handleUnHideFruits()
                             }}>UNHIDE</div>
@@ -616,7 +650,7 @@ function POS() {
                                 borderRadius: "20px",
                                 fontWeight: "500",
                                 color: "black",
-                                cursor:"pointer"
+                                cursor: "pointer"
                             }} onClick={() => {
                                 setAdminModalIsopen(false)
                                 setCheckedItems([])
@@ -660,13 +694,17 @@ function POS() {
                 </>;
             case "UPDATE_FRUIT":
                 return <>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "0px 15px",
-                        fontWeight: "bolder",
-                        marginBottom: "20px"
-                    }}>
+                    <div
+                        className='modalHeader'
+
+                    // style={{
+                    //     display: "flex",
+                    //     justifyContent: "space-between",
+                    //     padding: "0px 15px",
+                    //     fontWeight: "bolder",
+                    //     marginBottom: "20px"
+                    // }}
+                    >
                         <div>
                             <span style={{ cursor: "pointer" }} onClick={() => {
                                 setAdminModalIsopen(false)
@@ -681,11 +719,14 @@ function POS() {
                             Update Fruit</div>
 
                         {/* <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div> */}
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            padding: "0px 20px"
-                        }}>
+                        <div 
+                        className='modalHeaderButtons'
+                        // style={{
+                        //     display: "flex",
+                        //     flexDirection: "row",
+                        //     padding: "0px 20px"
+                        // }}
+                        >
                             <div style={{
                                 padding: "2px 15px",
                                 border: "1px solid black",
@@ -713,11 +754,14 @@ function POS() {
                         </div>
 
                     </div>
-                    <div style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        margin: "0px 45px"
-                    }}>
+                    <div 
+                    className='updateFruitDiv'
+                    // style={{
+                    //     display: "flex",
+                    //     flexDirection: "row",
+                    //     margin: "0px 45px"
+                    // }}
+                    >
                         <div style={{
                             padding: "0px 20px",
                             borderRight: "2px solid darkcyan",
@@ -786,13 +830,17 @@ function POS() {
                 </>;
             case "CHANGE_PASSWORD":
                 return <>
-                    <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        padding: "0px 15px",
-                        fontWeight: "bolder",
-                        marginBottom: "20px"
-                    }}>
+                    <div
+                        className='modalHeader'
+
+                    // style={{
+                    //     display: "flex",
+                    //     justifyContent: "space-between",
+                    //     padding: "0px 15px",
+                    //     fontWeight: "bolder",
+                    //     marginBottom: "20px"
+                    // }}
+                    >
                         <div>
                             <span style={{ cursor: "pointer" }} onClick={() => {
                                 setAdminModalIsopen(false)
@@ -809,11 +857,14 @@ function POS() {
                             }}> &lt; </span>
                             Change Password</div>
 
-                        <div style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            padding: "0px 20px"
-                        }}>
+                        <div 
+                        className='modalHeaderButtons'
+                        // style={{
+                        //     display: "flex",
+                        //     flexDirection: "row",
+                        //     padding: "0px 20px"
+                        // }}
+                        >
                             <div style={{
                                 padding: "2px 15px",
                                 border: "1px solid black",
@@ -907,11 +958,13 @@ function POS() {
                 {renderModalContent()}
             </Modal>
             <Dock dimMode='opaque'
+                size={dockSize}
                 dockStyle={{
                     boxShadow: "0px 0px 10px darkcyan",
                     zIndex: 0
                 }}
-                position='right' isVisible={isAdminDockVisible}>
+                position='right'
+                isVisible={isAdminDockVisible}>
                 {/* you can pass a function as a child here */}
                 <div style={{
                     display: "flex",
@@ -949,7 +1002,7 @@ function POS() {
                                 // onClick={() => showMContentForAdminPurpose("REPORTS")} 
                                 className='adminLoggedInMenuList comingSoon'>Reports <span className='comingSoon'>Coming soon... </span></div> */}
 
-                                <hr/>
+                                <hr />
                                 <div onClick={() => showMContentForAdminPurpose("CHANGE_PASSWORD")} className='adminLoggedInMenuList'>Change Password</div>
                             </div>
 
@@ -1005,15 +1058,15 @@ function POS() {
                 phone={phone} setPhone={setPhone}
                 removeFromCart={(index) => { removeFromCart(index) }}
                 showAdminDock={() => showAdminDock()} />
-                {dataLoaded ?    <div>
+            {dataLoaded ? <div>
                 <div>
-                {fruits.length ?  <FruitList fruits={fruits} addToCart={addToCart} config={config} /> : <>
-                <div style={{display:"flex", flexDirection:"column" , justifyContent:"center", alignItems:"center", height:"100vh" }}>
-                <img src={require("../assets/icons/empty_state_fruits.png")}
-                style={{width:"200px", height:"200px"}} />
-                <div style={{marginTop:"10px", fontSize:"0.8em", fontWeight:"bolder"}}>Fruits List is empty</div></div>
-                </> }
-                   
+                    {fruits.length ? <FruitList fruits={fruits} addToCart={addToCart} config={config} /> : <>
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                            <img src={require("../assets/icons/empty_state_fruits.png")}
+                                style={{ width: "200px", height: "200px" }} />
+                            <div style={{ marginTop: "10px", fontSize: "0.8em", fontWeight: "bolder" }}>Fruits List is empty</div></div>
+                    </>}
+
                 </div>
                 {/* <div>
                     <Cart cart={cart} total={total} placeOrder={placeOrder}
@@ -1022,13 +1075,13 @@ function POS() {
                         <Receipt ref={receiptRef} cart={cart} total={total} orderNumber={orderNumber} />
                     </div>
                 </div> */}
-            </div> :  <>
-                <div style={{display:"flex", flexDirection:"column" , justifyContent:"center", alignItems:"center", height:"100vh" }}>
-                <img src={require("../assets/icons/loading_1.gif")}
-                style={{width:"200px", height:"200px"}} />
+            </div> : <>
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                    <img src={require("../assets/icons/loading_1.gif")}
+                        style={{ width: "200px", height: "200px" }} />
                 </div>
-                </> }
-         
+            </>}
+
         </div >
     )
 }
