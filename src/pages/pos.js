@@ -10,6 +10,7 @@ import Modal from 'react-modal';
 import { Dock } from 'react-dock'
 import { decryptPassword, encryptPassword } from '../aes'
 import { toast, ToastContainer } from 'react-toastify'
+import backButton from "../assets/icons/back_button.svg"
 function POS() {
     const [fruits, setFruits] = useState([])
     const [all_fruits, setall_fruits] = useState([])
@@ -501,11 +502,23 @@ function POS() {
                                 setIsAdminDockVisible(true)
                                 setCheckedItems([])
                                 fetchAllFruits()
-                            }}> &lt; </span>
+                            }}>
+                                <img src={backButton}
+                                    height={25} width={25}
+                                    style={{
+                                        boxShadow: "0px 0px 10px teal",
+                                        borderRadius: "10px",
+                                        marginBottom: "-7px",
+                                        marginRight: "10px",
+                                        filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
+                                    }}
+                                />
+                                {/* &lt; */}
+                            </span>
                             ADD A FRUIT</div>
 
-                        <div 
-                        className='modalHeaderButtons'
+                        <div
+                            className='modalHeaderButtons'
                         // style={{
                         //     display: "flex",
                         //     flexDirection: "row",
@@ -596,11 +609,23 @@ function POS() {
                                 setIsAdminDockVisible(true)
                                 setCheckedItems([])
                                 fetchAllFruits()
-                            }}> &lt; </span>
+                            }}>
+                                 <img src={backButton}
+                                    height={25} width={25}
+                                    style={{
+                                        boxShadow: "0px 0px 10px teal",
+                                        borderRadius: "10px",
+                                        marginBottom: "-7px",
+                                        marginRight: "10px",
+                                        filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
+                                    }}
+                                />
+                                 {/* &lt; */}
+                                  </span>
                             REMOVE / HIDE FRUITS</div>
 
-                        <div 
-                        className='modalHeaderButtons'
+                        <div
+                            className='modalHeaderButtons'
                         // style={{
                         //     display: "flex",
                         //     flexDirection: "row",
@@ -715,12 +740,24 @@ function POS() {
                                 setCheckedItems([])
                                 fetchAllFruits()
                                 setNewFruit({ name: "", price: "", stock: "" })
-                            }}> &lt; </span>
+                            }}>
+                                 <img src={backButton}
+                                    height={25} width={25}
+                                    style={{
+                                        boxShadow: "0px 0px 10px teal",
+                                        borderRadius: "10px",
+                                        marginBottom: "-7px",
+                                        marginRight: "10px",
+                                        filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
+                                    }}
+                                />
+                                 {/* &lt; */}
+                                  </span>
                             Update Fruit</div>
 
                         {/* <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div> */}
-                        <div 
-                        className='modalHeaderButtons'
+                        <div
+                            className='modalHeaderButtons'
                         // style={{
                         //     display: "flex",
                         //     flexDirection: "row",
@@ -754,8 +791,8 @@ function POS() {
                         </div>
 
                     </div>
-                    <div 
-                    className='updateFruitDiv'
+                    <div
+                        className='updateFruitDiv'
                     // style={{
                     //     display: "flex",
                     //     flexDirection: "row",
@@ -854,11 +891,23 @@ function POS() {
                                 setNewPassword("")
                                 setConfirmPassword("")
                                 setNewFruit({ name: "", price: "", stock: "" })
-                            }}> &lt; </span>
+                            }}> 
+                             <img src={backButton}
+                                    height={25} width={25}
+                                    style={{
+                                        boxShadow: "0px 0px 10px teal",
+                                        borderRadius: "10px",
+                                        marginBottom: "-7px",
+                                        marginRight: "10px",
+                                        filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
+                                    }}
+                                />
+                            {/* &lt; */}
+                             </span>
                             Change Password</div>
 
-                        <div 
-                        className='modalHeaderButtons'
+                        <div
+                            className='modalHeaderButtons'
                         // style={{
                         //     display: "flex",
                         //     flexDirection: "row",
