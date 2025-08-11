@@ -26,6 +26,7 @@ function POS() {
     const [selectedFruitToUpdate, setSelectedFruitToUpdate] = useState(null);
     const receiptRef = useRef()
     const [dataLoaded, setDataLoaded] = useState(false);
+    const [showErrorPage, setShowErrorPage] = useState(false);
     const [newFruit, setNewFruit] = useState({
         name: '',
         price: '',
@@ -69,6 +70,24 @@ function POS() {
         fetchShop()
     }, [])
 
+    const  stringToBoolean = (value) => {
+  if (typeof value === 'boolean') return value; // already a boolean
+  if (typeof value !== 'string') return false;  // fallback
+
+  switch (value.toLowerCase().trim()) {
+    case 'true':
+    case '1':
+    case 'yes':
+      return true;
+    case 'false':
+    case '0':
+    case 'no':
+      return false;
+    default:
+      return false;
+  }
+}
+
     const loadConfig = async () => {
         const { data, error } = await supabase
             .from('config')
@@ -77,6 +96,7 @@ function POS() {
         console.log("DDDDDDDDDDDDDDDDD", data)
         if (error) {
             console.error('Error loading config:', error.message);
+            setShowErrorPage(true);
             return;
         }
 
@@ -87,6 +107,7 @@ function POS() {
         }, {});
 
         console.log("conobject", configObject)
+        setShowErrorPage(stringToBoolean(configObject?.showErrorPage))
         setConfig(configObject);
     }
     const fetchFruits = async () => {
@@ -94,8 +115,13 @@ function POS() {
             .eq("is_visible", true)
             .eq("is_deleted", false)
             .order('name', { ascending: true });
-        if (error) console.log(error)
-        else setFruits(data)
+        if (error) {
+            console.log(error)
+            setShowErrorPage(true);
+        }
+        else {
+            setFruits(data)
+        }
     }
 
     const fetchFruitsVisibleFilterExcluded = async () => {
@@ -103,23 +129,33 @@ function POS() {
             // .eq("is_visible", true)
             .eq("is_deleted", false)
             .order('name', { ascending: true });
-        if (error) console.log(error)
-        else setall_fruits(data)
+        if (error) {
+            setShowErrorPage(true);
+            console.log(error)
+        }
+        else {
+            setall_fruits(data)
+        }
     }
 
     const fetchShop = async () => {
         const { data, error } = await supabase.from('shops').select('*')
 
-        if (error) console.log(error)
-        else setShops(data)
+        if (error) {
+            setShowErrorPage(true);
+            console.log(error)
+        }
+        else {
+            setShops(data)
 
-        // let encryptedPassword = data[0].password;
-        // console.log(">>>:::encr ", encryptedPassword)
-        // console.log(">>>:::", decryptPassword(data[0]?.password))
+            // let encryptedPassword = data[0].password;
+            // console.log(">>>:::encr ", encryptedPassword)
+            // console.log(">>>:::", decryptPassword(data[0]?.password))
 
-        setPasswordToLogin(decryptPassword(data[0]?.password))
-        setEmailToLogin(data[0]?.email)
-        setDataLoaded(true)
+            setPasswordToLogin(decryptPassword(data[0]?.password))
+            setEmailToLogin(data[0]?.email)
+            setDataLoaded(true)
+        }
     }
 
     const convertToGrams = (weightStr) => {
@@ -610,7 +646,7 @@ function POS() {
                                 setCheckedItems([])
                                 fetchAllFruits()
                             }}>
-                                 <img src={backButton}
+                                <img src={backButton}
                                     height={25} width={25}
                                     style={{
                                         boxShadow: "0px 0px 10px teal",
@@ -620,8 +656,8 @@ function POS() {
                                         filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
                                     }}
                                 />
-                                 {/* &lt; */}
-                                  </span>
+                                {/* &lt; */}
+                            </span>
                             REMOVE / HIDE FRUITS</div>
 
                         <div
@@ -741,7 +777,7 @@ function POS() {
                                 fetchAllFruits()
                                 setNewFruit({ name: "", price: "", stock: "" })
                             }}>
-                                 <img src={backButton}
+                                <img src={backButton}
                                     height={25} width={25}
                                     style={{
                                         boxShadow: "0px 0px 10px teal",
@@ -751,8 +787,8 @@ function POS() {
                                         filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
                                     }}
                                 />
-                                 {/* &lt; */}
-                                  </span>
+                                {/* &lt; */}
+                            </span>
                             Update Fruit</div>
 
                         {/* <div onClick={() => { setAdminModalIsopen(false) }}>CLOSE</div> */}
@@ -891,8 +927,8 @@ function POS() {
                                 setNewPassword("")
                                 setConfirmPassword("")
                                 setNewFruit({ name: "", price: "", stock: "" })
-                            }}> 
-                             <img src={backButton}
+                            }}>
+                                <img src={backButton}
                                     height={25} width={25}
                                     style={{
                                         boxShadow: "0px 0px 10px teal",
@@ -902,8 +938,8 @@ function POS() {
                                         filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
                                     }}
                                 />
-                            {/* &lt; */}
-                             </span>
+                                {/* &lt; */}
+                            </span>
                             Change Password</div>
 
                         <div
@@ -993,145 +1029,165 @@ function POS() {
         }
     };
     return (
-        <div style={{ margin: 0 }}>
-            <ToastContainer
-                draggable={true} />
-            <Modal
-                style={{ zIndex: 1 }}
-                isOpen={AdminModalIsopen}
-                // onAfterOpen={afterOpenModal}
-                // onRequestClose={closeModal}
-                // style={customStyles}
-                contentLabel="Example Modal"
-            >
-                {renderModalContent()}
-            </Modal>
-            <Dock dimMode='opaque'
-                size={dockSize}
-                dockStyle={{
-                    boxShadow: "0px 0px 10px darkcyan",
-                    zIndex: 0
-                }}
-                position='right'
-                isVisible={isAdminDockVisible}>
-                {/* you can pass a function as a child here */}
-                <div style={{
-                    display: "flex",
-                    float: "right",
-                    margin: "20px",
-                    // textDecoration: "underline",
-                    textTransform: "uppercase",
-                    fontWeight: "bolder",
-                    cursor: "pointer",
-                }} onClick={() => {
-                    setPasswordToLoginEntered("")
-                    setIsAdminDockVisible(false)
-                    setisLogin(false)
-                }}> {isLogin ? "Logout" : "Close"}</div>
-
-
-                {isLogin ?
-                    <>
+        <>
+            {showErrorPage ?
+                <div
+                    style={{
+                        display: "flex", flexDirection: "column",
+                        justifyContent: "center", alignItems: "center",
+                        height: "50vh",
+                        marginTop:"100px"
+                    }}
+                >
+                    <img style={{ width: "25%" }}
+                        src={require("../assets/icons/Server-amico.png")} />
+                        <div style={{fontFamily:"calibri", 
+                            color:"purple", textAlign:"center", fontSize:"25px", fontWeight:"bold"}}>
+                            System under maintenance... Please wait for a moment... <br/><br/>
+                            <span style={{fontSize:"18px"}}> &copy; Freshuit, 2025</span>
+                        </div>
+                </div>
+                : <div style={{ margin: 0 }}>
+                    <ToastContainer
+                        draggable={true} />
+                    <Modal
+                        style={{ zIndex: 1 }}
+                        isOpen={AdminModalIsopen}
+                        // onAfterOpen={afterOpenModal}
+                        // onRequestClose={closeModal}
+                        // style={customStyles}
+                        contentLabel="Example Modal"
+                    >
+                        {renderModalContent()}
+                    </Modal>
+                    <Dock dimMode='opaque'
+                        size={dockSize}
+                        dockStyle={{
+                            boxShadow: "0px 0px 10px darkcyan",
+                            zIndex: 0
+                        }}
+                        position='right'
+                        isVisible={isAdminDockVisible}>
+                        {/* you can pass a function as a child here */}
                         <div style={{
-                            margin: "80px 10px", display: "flex",
-                            flexDirection: "column",
-                        }}>
-                            <div className='adminLoggedInMenuList'>
-                                Hi <span style={{ fontWeight: "bold" }}> {shops[0]?.admin_name}</span> !!!
-                            </div>
-                            <div className='adminLoggedInMenuTitle'>Menu</div>
-                            <div className='adminLoggedInMenu'>
-                                <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
-                                <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>Remove / Hide Fruits</div>
-                                <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits Details</div>
-                                {/* <div 
+                            display: "flex",
+                            float: "right",
+                            margin: "20px",
+                            // textDecoration: "underline",
+                            textTransform: "uppercase",
+                            fontWeight: "bolder",
+                            cursor: "pointer",
+                        }} onClick={() => {
+                            setPasswordToLoginEntered("")
+                            setIsAdminDockVisible(false)
+                            setisLogin(false)
+                        }}> {isLogin ? "Logout" : "Close"}</div>
+
+
+                        {isLogin ?
+                            <>
+                                <div style={{
+                                    margin: "80px 10px", display: "flex",
+                                    flexDirection: "column",
+                                }}>
+                                    <div className='adminLoggedInMenuList'>
+                                        Hi <span style={{ fontWeight: "bold" }}> {shops[0]?.admin_name}</span> !!!
+                                    </div>
+                                    <div className='adminLoggedInMenuTitle'>Menu</div>
+                                    <div className='adminLoggedInMenu'>
+                                        <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
+                                        <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>Remove / Hide Fruits</div>
+                                        <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits Details</div>
+                                        {/* <div 
                                 // onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} 
                                 className='adminLoggedInMenuList comingSoon'>View Orders <span className='comingSoon'>Coming soon... </span></div>
                                 <div 
                                 // onClick={() => showMContentForAdminPurpose("REPORTS")} 
                                 className='adminLoggedInMenuList comingSoon'>Reports <span className='comingSoon'>Coming soon... </span></div> */}
 
-                                <hr />
-                                <div onClick={() => showMContentForAdminPurpose("CHANGE_PASSWORD")} className='adminLoggedInMenuList'>Change Password</div>
-                            </div>
+                                        <hr />
+                                        <div onClick={() => showMContentForAdminPurpose("CHANGE_PASSWORD")} className='adminLoggedInMenuList'>Change Password</div>
+                                    </div>
 
-                        </div>
-                    </> :
-                    <>
-                        <div style={{ marginTop: "80px", display: "flex", alignItems: "center", flexDirection: "column", }}>
-                            <div style={{ fontWeight: "bolder" }}>
-                                Login to Admin
-                            </div>
-                            <div style={{ border: "1px solid darkcyan", marginTop: "50px", boxShadow: "0px 40px 100px darkcyan", padding: "20px", width: "60%", borderRadius: "10px", textAlign: "-webkit-center" }}>
-                                <div>
-                                    <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}> Mail ID</span>
-                                    <div>
-                                        <input disabled={true} value={emailToLogin} maxLength={10} style={{ textAlign: "center" }} />
-                                    </div>
                                 </div>
-                                <div style={{ marginTop: "10px" }}>
-                                    <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>Password</span>
-                                    <div>
-                                        <input type="password"
-                                            value={PasswordToLoginEntered}
-                                            onChange={(e) => { setPasswordToLoginEntered(e.target.value) }}
-                                            style={{ textAlign: "center" }} />
+                            </> :
+                            <>
+                                <div style={{ marginTop: "80px", display: "flex", alignItems: "center", flexDirection: "column", }}>
+                                    <div style={{ fontWeight: "bolder" }}>
+                                        Login to Admin
                                     </div>
-                                </div>
-                                <div
-                                    style={{ marginTop: "10px" }}>
-                                    <div style={PasswordToLogin == PasswordToLoginEntered
-                                        ? { marginTop: "10px" } : { marginTop: "10px", display: "none" }}>
-                                        <button
-                                            className="btnLogin"
-                                            onClick={() => {
-                                                setPasswordToLoginEntered("")
-                                                setisLogin(true)
-                                            }}
-                                        >LOGIN</button>
-                                    </div>
-                                </div>
-                                {/* <div style={{ marginTop: "10px", textAlign: "left", fontSize: "0.75em", color: "darkcyan" }}>
+                                    <div style={{ border: "1px solid darkcyan", marginTop: "50px", boxShadow: "0px 40px 100px darkcyan", padding: "20px", width: "60%", borderRadius: "10px", textAlign: "-webkit-center" }}>
+                                        <div>
+                                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}> Mail ID</span>
+                                            <div>
+                                                <input disabled={true} value={emailToLogin} maxLength={10} style={{ textAlign: "center" }} />
+                                            </div>
+                                        </div>
+                                        <div style={{ marginTop: "10px" }}>
+                                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>Password</span>
+                                            <div>
+                                                <input type="password"
+                                                    value={PasswordToLoginEntered}
+                                                    onChange={(e) => { setPasswordToLoginEntered(e.target.value) }}
+                                                    style={{ textAlign: "center" }} />
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{ marginTop: "10px" }}>
+                                            <div style={PasswordToLogin == PasswordToLoginEntered
+                                                ? { marginTop: "10px" } : { marginTop: "10px", display: "none" }}>
+                                                <button
+                                                    className="btnLogin"
+                                                    onClick={() => {
+                                                        setPasswordToLoginEntered("")
+                                                        setisLogin(true)
+                                                    }}
+                                                >LOGIN</button>
+                                            </div>
+                                        </div>
+                                        {/* <div style={{ marginTop: "10px", textAlign: "left", fontSize: "0.75em", color: "darkcyan" }}>
                             <div>
                                 OTP sent !!
                             </div>
                         </div> */}
-                            </div>
-                            <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
-                                Conact Support
-                            </div>
-                        </div></>}
+                                    </div>
+                                    <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
+                                        Conact Support
+                                    </div>
+                                </div></>}
 
-            </Dock >
-            <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
-                phone={phone} setPhone={setPhone}
-                removeFromCart={(index) => { removeFromCart(index) }}
-                showAdminDock={() => showAdminDock()} />
-            {dataLoaded ? <div>
-                <div>
-                    {fruits.length ? <FruitList fruits={fruits} addToCart={addToCart} config={config} /> : <>
-                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                            <img src={require("../assets/icons/empty_state_fruits.png")}
-                                style={{ width: "200px", height: "200px" }} />
-                            <div style={{ marginTop: "10px", fontSize: "0.8em", fontWeight: "bolder" }}>Fruits List is empty</div></div>
-                    </>}
+                    </Dock >
+                    <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
+                        phone={phone} setPhone={setPhone}
+                        removeFromCart={(index) => { removeFromCart(index) }}
+                        showAdminDock={() => showAdminDock()} />
+                    {dataLoaded ? <div>
+                        <div>
+                            {fruits.length ? <FruitList fruits={fruits} addToCart={addToCart} config={config} /> : <>
+                                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                                    <img src={require("../assets/icons/empty_state_fruits.png")}
+                                        style={{ width: "200px", height: "200px" }} />
+                                    <div style={{ marginTop: "10px", fontSize: "0.8em", fontWeight: "bolder" }}>Fruits List is empty</div></div>
+                            </>}
 
-                </div>
-                {/* <div>
+                        </div>
+                        {/* <div>
                     <Cart cart={cart} total={total} placeOrder={placeOrder}
                      phone={phone} setPhone={setPhone} />
                     <div>
                         <Receipt ref={receiptRef} cart={cart} total={total} orderNumber={orderNumber} />
                     </div>
                 </div> */}
-            </div> : <>
-                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                    <img src={require("../assets/icons/loading_1.gif")}
-                        style={{ width: "200px", height: "200px" }} />
-                </div>
-            </>}
+                    </div> : <>
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                            <img src={require("../assets/icons/loading_1.gif")}
+                                style={{ width: "200px", height: "200px" }} />
+                        </div>
+                    </>}
 
-        </div >
+                </div >}
+
+        </>
     )
 }
 export default POS
