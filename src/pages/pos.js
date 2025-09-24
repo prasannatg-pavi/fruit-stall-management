@@ -11,6 +11,8 @@ import { Dock } from 'react-dock'
 import { decryptPassword, encryptPassword } from '../aes'
 import { toast, ToastContainer } from 'react-toastify'
 import backButton from "../assets/icons/back_button.svg"
+import 'react-calendar/dist/Calendar.css';
+import Calendar from 'react-calendar'
 function POS() {
     const [fruits, setFruits] = useState([])
     const [all_fruits, setall_fruits] = useState([])
@@ -44,6 +46,8 @@ function POS() {
     const [isVisible, setIsVisible] = useState(true);
     const [dockSize, setDockSize] = useState(0.3);
     const [dockPosition, setDockPosition] = useState('right');
+     const [calanderDate, setCalanderDate] = useState(new Date());
+  const [orders, setOrders] = useState([]);
 
     useEffect(() => {
         const updateDockLayout = () => {
@@ -70,23 +74,315 @@ function POS() {
         fetchShop()
     }, [])
 
-    const  stringToBoolean = (value) => {
-  if (typeof value === 'boolean') return value; // already a boolean
-  if (typeof value !== 'string') return false;  // fallback
+    const getDateRangeFor = (date) => {
+  const start = new Date(date);
+  start.setUTCHours(0, 0, 0, 0);
 
-  switch (value.toLowerCase().trim()) {
-    case 'true':
-    case '1':
-    case 'yes':
-      return true;
-    case 'false':
-    case '0':
-    case 'no':
-      return false;
-    default:
-      return false;
+  const end = new Date(date);
+  end.setUTCHours(23, 59, 59, 999);
+
+  return {
+    start: start.toISOString(), // 'YYYY-MM-DDT00:00:00.000Z'
+    end: end.toISOString()      // 'YYYY-MM-DDT23:59:59.999Z'
+  };
+};
+    
+  useEffect(() => {
+    // Function to fetch orders for a specific date
+    const fetchOrders = async () => {
+      // If no date is selected, don't fetch data
+      if (!calanderDate) return;
+
+  const { data: orderItems, error } = await supabase
+    .from('order_items')
+   .select(`
+    id,
+    quantity,
+    unit_price,
+    fruit_id,
+    order_id,
+    orders:orders!order_items_order_id_fkey (
+      id,
+      created_at,
+      total
+    ),
+    fruits:fruits!order_items_fruit_id_fkey (
+      id,
+      name,
+      price,
+      stock
+    )
+  `)
+   .not('order_id', 'is', null)
+    // .gte('orders.created_at', getDateRangeFor(formatDate(calanderDate)).start)
+    // .lte('orders.created_at', getDateRangeFor(formatDate(calanderDate)).end);
+
+
+
+  if (error) {
+    console.error("Error fetching order items:", error);
+    return [];
   }
-}
+
+  // Group items by order ID
+  const grouped = {};
+
+  for (const item of orderItems) {
+    const orderId = item.order_id;
+    if (!grouped[orderId]) {
+      grouped[orderId] = {
+        id: item.orders?.id,
+        created_at: item.orders?.created_at,
+        total: item.orders?.total,
+        order_items: [],
+      };
+    }
+
+    grouped[orderId].order_items.push({
+      id: item.id,
+      quantity: item.quantity,
+      unit_price: item.unit_price,
+      fruit_id: item.fruit_id,
+      fruit: item.fruits || null,
+    });
+  }
+
+  console.log("GROUPED", grouped)
+  // Convert to array
+  setOrders(Object.values(grouped));
+  
+     let arrFinal = await Object.values(grouped).filter(item => {
+    // if (!item.orders || !item.created_at) return false;
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+     // Create Date object from the UTC string
+    const date = new Date(item.created_at);
+
+    // Convert to IST by adding 5 hours 30 minutes
+    // Using Intl.DateTimeFormat with "Asia/Kolkata" timezone
+    const options = {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    };
+
+    let originalDate = Intl.DateTimeFormat("en-IN", options).format(date);
+    console.log("ORIGINAL DATE", originalDate)
+    // Extract YYYY-MM-DD from ISO datetime string
+    const orderDate = originalDate.slice(0, 10).replaceAll("/","-");
+    console.log("ORIGINAL DATE", orderDate, formatDate(calanderDate))
+
+
+    return orderDate === formatDate(calanderDate);
+  });
+
+  console.log(">>>>>>>>>>>>>>>>>>>..", arrFinal)
+  setOrders(arrFinal)
+//       const { data: orders, error: ordersErr } = await supabase
+//   .from('orders')
+//   .select(`*`)
+//   .gte('created_at',  getDateRangeFor(formatDate(calanderDate)).start)
+//   .lte('created_at',  getDateRangeFor(formatDate(calanderDate)).end);
+
+// if (ordersErr) {
+//   console.error(ordersErr);
+//   return [];
+// }
+
+// const orderIds = orders.map(o => o.id);
+
+// if (orderIds.length === 0) {
+//   return orders.map(o => ({ ...o, order_items: [] }));
+// }
+
+// // fetch all items for those orders
+// const { data: items, error: itemsErr } = await supabase
+//   .from('order_items')
+//   .select(`
+//     *,
+//     fruits!order_items_fruit_id_fkey ( id, name, price, stock )
+//   `)
+//   .in('order_id', orderIds);
+
+// if (itemsErr) {
+//   console.error(itemsErr);
+//   return orders.map(o => ({ ...o, order_items: [] }));
+// }
+
+// // group items by order_id
+// const itemsByOrderId = items.reduce((map, item) => {
+//   const oid = item.order_id;
+//   if (!map[oid]) map[oid] = [];
+//   map[oid].push(item);
+//   return map;
+// }, {});
+
+// // map into orders
+// const result = orders.map(o => ({
+//   ...o,
+//   order_items: itemsByOrderId[o.id] || []
+// }));
+
+// setOrders(result);
+
+///////////////////////////////////////////////////
+
+//       const { data, error } = await supabase
+//         .from('orders')
+//          .select(`
+//       *,
+//       order_items:order_items!order_items_order_id_fkey (
+//         id,
+//         quantity,
+//         unit_price,
+//         fruit_id,
+//         fruits:fruits!order_items_fruit_id_fkey (
+//           id,
+//           name,
+//           price,
+//           stock
+//         )
+//       )
+//     `)
+// //   .select(`
+// //     *,
+// //     order_items:order_items!order_items_order_id_fkey (
+// //       *,
+// //       fruits:fruits!order_items_fruit_id_fkey (
+// //         id,
+// //         name,
+// //         price,
+// //         stock
+// //       )
+// //     )
+// //   `)
+// //  .select(`
+// //       *,
+// //       order_items (
+// //         *,
+// //         fruits (
+// //           id,
+// //           name,
+// //           price,
+// //           stock
+// //         )
+// //       )
+// //     `)
+//   .gte('created_at',  getDateRangeFor(formatDate(calanderDate)).start)
+//   .lte('created_at',  getDateRangeFor(formatDate(calanderDate)).end)
+//   .order('created_at', { ascending: false });
+//         // .from('order_items')
+// //   .select(`
+// //     *,
+// //     orders!order_items_order_id_fkey (
+// //       id,
+// //       created_at
+// //     ),
+// //     fruits!order_items_fruit_id_fkey (
+// //       id,
+// //       name,
+// //       price,
+// //       stock
+// //     )
+// //   `)
+// //         .gte('orders.created_at', getDateRangeFor(formatDate(calanderDate)).start) // Filter by the selected date
+// //         .lte('orders.created_at', getDateRangeFor(formatDate(calanderDate)).end) // Filter by the selected date
+//         // .order('orders.created_at', { ascending: false });
+// //         .from('orders')
+// //   .select(`
+// //     *,
+// //     order_items:order_items!order_items_order_id_fkey (
+// //       *,
+// //       fruits:fruits!order_items_fruit_id_fkey (
+// //         id,
+// //         name,
+// //         price,
+// //         stock
+// //       )
+// //     )
+// //   `)
+//         // .select(`
+//         //   id,
+//         //   order_number,
+//         //   created_at,
+//         //   total,
+//         //   paid,
+//         //   customer_phone,
+//         //   shop_id,
+//         //   order_items (
+//         //     id,
+//         //     quantity,
+//         //     unit_price,
+//         //     fruit_id,
+//         //     fruits (
+//         //       id,
+//         //       name,
+//         //       price,
+//         //       stock
+//         //     )
+//         //   )
+//         // `)
+
+    //   if (error) {
+    //     console.error('Error fetching orders:', error);
+    //   } else {
+    //     setOrders(data);
+    //   }
+    };
+
+    fetchOrders();
+  }, [calanderDate]);
+
+
+    const stringToBoolean = (value) => {
+        if (typeof value === 'boolean') return value; // already a boolean
+        if (typeof value !== 'string') return false;  // fallback
+
+        switch (value.toLowerCase().trim()) {
+            case 'true':
+            case '1':
+            case 'yes':
+                return true;
+            case 'false':
+            case '0':
+            case 'no':
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    const formatDate = (date) => {
+         if (!date) return ''; // Ensure the date is valid
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Pad single digit months with leading zero
+  const day = String(date.getDate()).padStart(2, '0'); // Pad single digit days with leading zero
+
+  return `${day}-${month}-${year}`; // Return formatted date as 'YYYY-MM-DD'
+//         return date.toLocaleDateString('en-GB', {
+//     day: '2-digit',
+//     month: 'short',
+//     year: 'numeric',
+//   });
+    // return date?.toLocaleDateString(); // You can customize formatting here
+  };
+
+  const renderSelectedDate = () => {
+    if (Array.isArray(calanderDate)) {
+      const [start, end] = calanderDate;
+      return (
+        <p>
+          Selected range: {formatDate(start)} — {formatDate(end)}
+        </p>
+      );
+    } else {
+      return <p>Selected date: <b>{formatDate(calanderDate)}</b></p>;
+    }
+  };
 
     const loadConfig = async () => {
         const { data, error } = await supabase
@@ -259,6 +555,7 @@ function POS() {
         const stockMap = new Map(orderedFruits.map(f => [f.id, f.stock]))
         console.log("STOCK MAP", stockMap)
         for (let item of cart) {
+            console.log("ITEMMMMMMMMMMMMMMMM", item)
             const available = stockMap.get(item.id)
             if (available === undefined) {
                 console.log(`Fruit ID ${item.id} not exists`)
@@ -273,18 +570,11 @@ function POS() {
 
             console.log(" ================ ", available, fruit_newWeightValue, item)
 
-            if (available < fruit_newWeightValue) {
+              if (available < fruit_newWeightValue) {
                 console.log(`Not enough stock for fruit ID: ${item.id} `)
                 return;
             }
-            // await supabase.from('order_items').insert([
-            //     {
-            //         order_id: order.id, fruit_id: item.id, quantity: item.qty,
-            //         unit_price: item.price
-            //     }
-            // ])
-        }
-
+            
         const { data: order, error: orderError } = await supabase
             .from('orders')
             .insert([{ total, paid: true, customer_phone: phone }])
@@ -294,6 +584,20 @@ function POS() {
             return
         }
         setOrderNumber(order.order_number)
+             await supabase.from('order_items').insert([
+                {
+                    order_id: order.id, 
+                    fruit_id: item.id, 
+                    quantity: fruit_unit == "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue,
+                    // quantity: (fruit_unit == "gm" ? fruit_newWeightValue / 1000 : fruit_newWeightValue),
+                    // quantity: item.weight,
+                    unit_price: item.price
+                }
+            ])
+          
+           
+        }
+
 
         const updates = await Promise.all(
             cart.map(item => {
@@ -901,6 +1205,145 @@ function POS() {
                         </div>
                     </div>
                 </>;
+            case "ORDER_PAGE":
+                return <>
+                    <div
+                        className='modalHeader'
+                    //  style={{
+                    //     display: "flex",
+                    //     justifyContent: "space-between",
+                    //     padding: "0px 15px",
+                    //     fontWeight: "bolder",
+                    //     marginBottom: "20px"
+                    // }}
+                    >
+                        <div>
+                            <span style={{ cursor: "pointer" }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setAdminModalContent("")
+                                setisLogin(true)
+                                setPasswordToLoginEntered("")
+                                setIsAdminDockVisible(true)
+                                setCheckedItems([])
+                                fetchAllFruits()
+                            }}>
+                                <img src={backButton}
+                                    height={25} width={25}
+                                    style={{
+                                        boxShadow: "0px 0px 10px teal",
+                                        borderRadius: "10px",
+                                        marginBottom: "-7px",
+                                        marginRight: "10px",
+                                        filter: "invert(16%) sepia(90%) saturate(576%) hue-rotate(137deg) brightness(94%) contrast(93%)"
+                                    }}
+                                />
+                                {/* &lt; */}
+                            </span>
+                            VIEW ORDERS</div>
+
+                        <div
+                            className='modalHeaderButtons'
+                        // style={{
+                        //     display: "flex",
+                        //     flexDirection: "row",
+                        //     padding: "0px 20px"
+                        // }}
+                        >
+                            {/* <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={handleAddFruits.bind(this)}>
+ 🔍  
+                                SELECT DATE
+                            </div> */}
+                            <div style={{
+                                padding: "2px 15px",
+                                border: "1px solid black",
+                                marginLeft: "5px",
+                                fontSize: "0.9em",
+                                borderRadius: "20px",
+                                fontWeight: "500",
+                                color: "black",
+                                cursor: "pointer"
+                            }} onClick={() => {
+                                setAdminModalIsopen(false)
+                                setCheckedItems([])
+                                fetchAllFruits()
+                            }}>CLOSE</div>
+                        </div>
+
+
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: "75%" }}>
+                        <div style={{
+                            display: "flex", justifyContent: "center",
+                            verticalAlign: "center",
+
+                            alignContent: "center"
+                        }}>
+                            {/* <Calendar /> */}
+                            <Calendar onChange={setCalanderDate} value={calanderDate} selectRange={false} />
+      
+                        </div>
+                        <div style={{
+                            display: "flex", marginBottom: "auto",
+                            flexDirection: "column",
+                            padding: "0px 20px"
+                        }}>
+                            <div>
+                                {renderSelectedDate()}
+                                
+                            </div>
+                            <div>
+
+                                  <table width="100%">
+        <thead>
+          <tr>
+            <th align="left">Order ID</th>
+            <th align="right">Order Item ID </th>
+            <th align="right">Ordered at</th>
+            <th align="right">Total</th>
+            <th align="right">Quantity (In GMS)</th>
+            <th align="right">Unit price</th>
+            <th align="right">Fruit name</th>
+            <th align="right">Fruit Price</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+         {orders.map((order) =>
+          order.order_items.map((item) => (
+            <tr key={item.id}>
+              <td align="left">{order.id}</td>
+              <td align="right">{item.id}</td>
+              <td align="right">{(order.created_at)}</td>
+              <td align="right">₹{order.total}</td>
+              <td align="right">{item.quantity}</td>
+              <td align="right">₹{item.unit_price}</td>
+              <td align="right">{item.fruit.name}</td>
+              <td align="right">₹{item.fruit.price}</td>
+            </tr>
+          ))
+        )}
+        </tbody>
+         {/* <td align="right"> */}
+                {/* {item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[2] == "gm" ?
+                  "₹" + ((item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1]) / 1000).toFixed(2) :
+                  "₹" + (item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1]).toFixed(2)}
+              
+                ₹{((item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1]) / 1000).toFixed(2)} */}
+                {/* </td> */}
+      </table>
+                            </div>
+                        </div>
+                    </div>
+                </>;
             case "CHANGE_PASSWORD":
                 return <>
                     <div
@@ -1036,16 +1479,18 @@ function POS() {
                         display: "flex", flexDirection: "column",
                         justifyContent: "center", alignItems: "center",
                         height: "50vh",
-                        marginTop:"100px"
+                        marginTop: "100px"
                     }}
                 >
                     <img style={{ width: "25%" }}
                         src={require("../assets/icons/Server-amico.png")} />
-                        <div style={{fontFamily:"calibri", 
-                            color:"purple", textAlign:"center", fontSize:"25px", fontWeight:"bold"}}>
-                            System under maintenance... Please wait for a moment... <br/><br/>
-                            <span style={{fontSize:"18px"}}> &copy; Freshuit, 2025</span>
-                        </div>
+                    <div style={{
+                        fontFamily: "calibri",
+                        color: "purple", textAlign: "center", fontSize: "25px", fontWeight: "bold"
+                    }}>
+                        System under maintenance... Please wait for a moment... <br /><br />
+                        <span style={{ fontSize: "18px" }}> &copy; Freshuit, 2025</span>
+                    </div>
                 </div>
                 : <div style={{ margin: 0 }}>
                     <ToastContainer
@@ -1098,6 +1543,7 @@ function POS() {
                                         <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
                                         <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>Remove / Hide Fruits</div>
                                         <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits Details</div>
+                                        <div onClick={() => showMContentForAdminPurpose("ORDER_PAGE")} className='adminLoggedInMenuList'>Order List</div>
                                         {/* <div 
                                 // onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} 
                                 className='adminLoggedInMenuList comingSoon'>View Orders <span className='comingSoon'>Coming soon... </span></div>
