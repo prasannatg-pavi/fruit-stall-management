@@ -71,7 +71,7 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
           />
         </div>
       </div> : <>
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "60vh" }}>
           <img src={require("../assets/icons/empty_state_cart.png")}
             style={{ width: "200px", height: "200px" }} />
           <div style={{ marginTop: "10px", fontSize: "0.8em", fontWeight: "bolder" }}>Your cart is empty</div></div>
