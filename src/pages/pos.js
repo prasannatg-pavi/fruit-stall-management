@@ -572,6 +572,9 @@ function POS() {
 
             if (available < fruit_newWeightValue) {
                 console.log(`Not enough stock for fruit ID: ${item.id} `)
+                toast.error(`Stock unavailable for ${item.name} `, {
+                    position: "bottom-right"
+                })
                 return;
             }
 
@@ -620,6 +623,9 @@ function POS() {
         setTotal(0)
         setPhone('')
         fetchFruits()
+        toast.success("Order placed successfully", {
+            position: "bottom-right"
+        })
     }
 
     const sendWhatsApp = (order) => {
@@ -1281,16 +1287,17 @@ function POS() {
 
 
                     </div>
-                    <div 
-                    style={{ display: "flex", flexDirection: "row", 
-                        // alignItems: "center", height: "75%" 
-                    }}
+                    <div
+                        style={{
+                            display: "flex", flexDirection: "row",
+                            // alignItems: "center", height: "75%" 
+                        }}
                     >
                         <div style={{
                             display: "flex",
                             // justifyContent: "center",
                             // verticalAlign: "center",
-height:"fit-content"
+                            height: "fit-content"
                             // alignContent: "center"
                         }}>
                             {/* <Calendar /> */}
@@ -1310,7 +1317,7 @@ height:"fit-content"
                             <div>
 
                                 <table width="100%" style={{
-                                    height: "500px",
+                                    height: "230px",
                                     overflowY: "auto",
                                     border: "1px solid #ccc",
                                     display: "block"
@@ -1327,11 +1334,12 @@ height:"fit-content"
                                             {/* <th align="right">Order Item ID </th> */}
 
                                             <th align="center" style={{ width: "15%" }}>Ordered at</th>
-                                            <th align="center" style={{ width: "5%" }}>Weight <br/>(In GMS)</th>
+                                            <th align="center" style={{ width: "5%" }}>Weight <br />(In GMS)</th>
                                             {/* <th align="left" style={{ width: "10%" }}>Unit price</th> */}
                                             <th align="center" style={{ width: "15%" }}>Fruit name</th>
                                             <th align="center" style={{ width: "10%" }}>Fruit Price</th>
-                                            <th align="center" style={{ width: "5%" }}>Total</th>
+                                            <th align="center" style={{ width: "5%" }}>Price per weight</th>
+                                            {/* <th align="center" style={{ width: "5%" }}>Total</th> */}
 
 
                                         </tr>
@@ -1341,6 +1349,11 @@ height:"fit-content"
                                     >
                                         {orders.map((order) =>
                                             order.order_items.map((item, index) => (
+
+                                                //const weightInGrams = item.weight;// convertToGrams(item.weight);
+                                                // let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
+                                                // let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
+                                                // let fruit_unit = fruit_weightMatch[2];
                                                 <tr key={item.id}>
                                                     <td align="center" style={{ width: "5%" }}>{++count}</td>
                                                     {/* <td align="right">{item.id}</td> */}
@@ -1349,13 +1362,14 @@ height:"fit-content"
                                                         day: "2-digit", month: "2-digit", year: "numeric",
                                                         hour: "2-digit", minute: "2-digit", second: "2-digit",
                                                         hour12: false,
-                                                    }).format(new Date(order.created_at.replace(/\.\d+/, ""))).replaceAll(",","")}</td>
+                                                    }).format(new Date(order.created_at.replace(/\.\d+/, ""))).replaceAll(",", "")}</td>
                                                     {/* <td align="right">{(order.created_at)}</td> */}
                                                     <td align="center" style={{ width: "5%" }}>{item.quantity}</td>
                                                     {/* <td align="left" style={{ width: "10%" }}>₹{item.unit_price}</td> */}
                                                     <td align="center" style={{ width: "15%" }}>{item.fruit.name}</td>
                                                     <td align="center" style={{ width: "10%" }}>₹{item.fruit.price}</td>
-                                                    <td align="center" style={{ width: "5%" }}>₹{order.total}</td>
+                                                    <td align="center" style={{ width: "5%" }}>₹{(item.fruit.price  * Number((item.quantity/1000))).toFixed(2)}</td>
+                                                    {/* <td align="center" style={{ width: "10%" }}>₹{order.total}</td> */}
 
                                                 </tr>
                                             ))
