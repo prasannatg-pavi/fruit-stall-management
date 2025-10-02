@@ -12,7 +12,7 @@ export default function Cart({ cart, total, placeOrder, phone, setPhone, removeF
 const [hasOutOfStockItems, setHasOutOfStockItems] = useState(false); // ✅
 
   const getCurrentStock = async () => {
-
+console.log("!@@@@@@@@@@@@@@@@@@@@@@@", cart)
   const orderedFruitIds = cart.map(c => c.id);
   const { data: orderedFruits, error: fetchError } = await supabase
     .from("fruits")
@@ -48,6 +48,10 @@ const [hasOutOfStockItems, setHasOutOfStockItems] = useState(false); // ✅
   useEffect(()=>{
     getCurrentStock()
   },[])
+
+  useEffect(()=>{
+    getCurrentStock()  
+  }, [cart])
   // fetch stock for all ordered fruits
   return (
     <>
@@ -112,7 +116,10 @@ const [hasOutOfStockItems, setHasOutOfStockItems] = useState(false); // ✅
                       borderRadius: "10px",
                       cursor: "pointer"
                     }}
-                    className="btnCartReceipt" onClick={() => removeFromCart(index)}>Remove</button>
+                    className="btnCartReceipt" onClick={() => {
+                      removeFromCart(index)
+                    
+                      }}>Remove</button>
                 </div>
               </div>
 
