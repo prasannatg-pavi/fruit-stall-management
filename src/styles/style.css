@@ -191,6 +191,14 @@
     margin: 0px 45px;
 }
 
+@media (max-width: 900px) {
+      .orderLayout{
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+}
+
 /* Mobile View: Stack top-bottom */
 @media (max-width: 768px) {
     .modalCartReceipt {
@@ -205,6 +213,9 @@
 }
 
 @media (max-width: 760px) {
+
+  
+
     .addFruitFieldRow {
         display: flex;
         flex: 1 1;
