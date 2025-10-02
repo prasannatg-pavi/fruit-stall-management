@@ -48,6 +48,7 @@ function POS() {
     const [dockPosition, setDockPosition] = useState('right');
     const [calanderDate, setCalanderDate] = useState(new Date());
     const [orders, setOrders] = useState([]);
+    const [orderCumulativeSum, setOrderCumulativeSum] = useState(0.0);
 
     useEffect(() => {
         const updateDockLayout = () => {
@@ -182,6 +183,19 @@ function POS() {
 
             console.log(">>>>>>>>>>>>>>>>>>>..", arrFinal)
             setOrders(arrFinal)
+
+            let totalCumulativeSum = 0;
+
+            arrFinal.forEach(order => {
+                order.order_items.forEach(item => {
+                    const itemTotal = item.fruit.price * (item.quantity / 1000);
+                    totalCumulativeSum += itemTotal;
+                });
+            });
+
+            totalCumulativeSum = totalCumulativeSum.toFixed(2);
+            setOrderCumulativeSum(totalCumulativeSum);
+            console.log("Total Cumulative Sum:", totalCumulativeSum); // Output: 297.02
             //       const { data: orders, error: ordersErr } = await supabase
             //   .from('orders')
             //   .select(`*`)
@@ -598,7 +612,7 @@ function POS() {
                 }
             ])
 
-
+ sendWhatsApp(order)
         }
 
 
@@ -618,7 +632,7 @@ function POS() {
         )
 
         // handlePrint()
-        // sendWhatsApp(order)
+       
         setCart([])
         setTotal(0)
         setPhone('')
@@ -630,7 +644,9 @@ function POS() {
 
     const sendWhatsApp = (order) => {
         const items = cart.map(item => `${item.name} x ${item.qty}`).join('%0A')
-        const message = `*Fruit Stall Bill* %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}`
+        const message = `
+        *Fruit Stall Bill* %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}
+        `
         const url = `https://wa.me/${phone}?text=${message}`
         window.open(url, '_blank')
     }
@@ -1288,6 +1304,7 @@ function POS() {
 
                     </div>
                     <div
+                        className='orderLayout'
                         style={{
                             display: "flex", flexDirection: "row",
                             // alignItems: "center", height: "75%" 
@@ -1368,7 +1385,7 @@ function POS() {
                                                     {/* <td align="left" style={{ width: "10%" }}>₹{item.unit_price}</td> */}
                                                     <td align="center" style={{ width: "15%" }}>{item.fruit.name}</td>
                                                     <td align="center" style={{ width: "10%" }}>₹{item.fruit.price}</td>
-                                                    <td align="center" style={{ width: "5%" }}>₹{(item.fruit.price  * Number((item.quantity/1000))).toFixed(2)}</td>
+                                                    <td align="center" style={{ width: "5%" }}>₹{(item.fruit.price * Number((item.quantity / 1000))).toFixed(2)}</td>
                                                     {/* <td align="center" style={{ width: "10%" }}>₹{order.total}</td> */}
 
                                                 </tr>
@@ -1383,6 +1400,14 @@ function POS() {
                 ₹{((item.price * item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/)[1]) / 1000).toFixed(2)} */}
                                     {/* </td> */}
                                 </table>
+                                <div style={{
+                                    display: "flex",
+                                    marginTop: "12px",
+                                    justifySelf: "right"
+                                }}>
+                                    Total profit today:
+                                    <span style={{fontWeight:"bold"}}> &nbsp; ₹ { orderCumulativeSum} </span>
+                                </div>
                             </div>
                         </div>
                     </div>
