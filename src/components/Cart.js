@@ -34,8 +34,8 @@ console.log("!@@@@@@@@@@@@@@@@@@@@@@@", cart)
     if (!match) continue;
     let qty = parseFloat(match[1]);
     let unit = match[2];
-    let requiredQty = unit === "gm" ? qty / 1000 : qty;
-
+    let requiredQty = unit === "kg" ? qty * 1000 : qty;
+    
     if (stock !== undefined && stock < requiredQty) {
       outOfStock = true;
       break;
@@ -69,7 +69,7 @@ console.log("!@@@@@@@@@@@@@@@@@@@@@@@", cart)
             let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
             let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
             let fruit_unit = fruit_weightMatch[2];
-              let requiredQty = fruit_unit === "gm" ? fruit_newWeightValue / 1000 : fruit_newWeightValue;
+              let requiredQty = fruit_unit === "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue;
             console.log("123123123123123132", item, available, fruit_unit == "kg" ? fruit_newWeightValue * 1000 : fruit_newWeightValue);
 // alert(available+"---"+fruit_newWeightValue)
             return (
