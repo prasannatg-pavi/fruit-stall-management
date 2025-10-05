@@ -5,7 +5,7 @@ import { supabase } from '../supabaseClient'
 import { useEffect, useState } from "react";
 
 // :white_tick: :three: Cart.js — Show cart
-export default function Cart({ cart, total, placeOrder, phone, setPhone, removeFromCart }) {
+export default function Cart({ cart, total, placeOrder, paymentMethod, setPaymentMethod, phone, setPhone, cusName, setCusName,  removeFromCart }) {
   console.log("item", cart)
   let sno = 0;
   const [stockMap, setStockMap] = useState(new Map()); // ✅ FIXED
@@ -52,6 +52,52 @@ console.log("!@@@@@@@@@@@@@@@@@@@@@@@", cart)
   useEffect(()=>{
     getCurrentStock()  
   }, [cart])
+
+  
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    maxWidth: '900px',
+    // margin: '0 auto',
+    // padding: '10px',
+    boxSizing: 'border-box',
+    flexWrap: 'wrap',
+  };
+
+  const halfWidthSection = {
+    width: '50%',
+    padding: '0px 16px',
+    boxSizing: 'border-box',
+  };
+
+  const sectionBoxStyle = {
+    // border: '1px solid #ccc',
+    // borderRadius: '8px',
+    padding: '5px 0px',
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '8px',
+    marginTop: '8px',
+    marginBottom: '12px',
+    borderRadius: '4px',
+    border: '1px solid #aaa',
+    boxSizing: 'border-box',
+  };
+
+  const labelStyle = {
+    display: 'block',
+    marginBottom: '10px',
+    fontSize: '16px',
+  };
+
+  // Responsive styles using a media query (with inline workaround)
+  const mediaQuery = window.matchMedia('(max-width: 768px)');
+  if (mediaQuery.matches) {
+    halfWidthSection.width = '100%';
+  }
   // fetch stock for all ordered fruits
   return (
     <>
@@ -136,12 +182,94 @@ console.log("!@@@@@@@@@@@@@@@@@@@@@@@", cart)
 {!hasOutOfStockItems ? (
   <>
   <h3>Total: ₹{total.toFixed(2)}</h3>
+      <div style={containerStyle}>
+      {/* Left: Customer Details */}
+      <div style={halfWidthSection}>
+        <div style={sectionBoxStyle}>
+          <h3>Customer Details</h3>
+          <input
+            type="text"
+            placeholder="Customer Name"
+            value={cusName}
+            onChange={e => setCusName(e.target.value)}
+            style={inputStyle}
+          />
+          <input
+            type="text"
+            placeholder="Customer WhatsApp"
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            style={inputStyle}
+          />
+        </div>
+      </div>
+
+      {/* Right: Payment Method */}
+      <div style={halfWidthSection}>
+        <div style={sectionBoxStyle}>
+          <h3>Payment Method</h3>
+          <label style={labelStyle}>
+            <input
+              type="radio"
+              value="Cash"
+              checked={paymentMethod === 'Cash'}
+              onChange={setPaymentMethod}
+            />
+            Cash
+          </label>
+          <label style={labelStyle}>
+            <input
+              type="radio"
+              value="UPI"
+              checked={paymentMethod === 'UPI'}
+              onChange={setPaymentMethod}
+            />
+            UPI
+          </label>
+        </div>
+      </div>
+    </div>
+        {/* <h3>Customer Details</h3>
+
+        <input
+          type="text"
+          placeholder="Customer Name"
+          value={cusName}
+          onChange={e => setCusName(e.target.value)}
+        />
+  <br/>
         <input
           type="text"
           placeholder="Customer WhatsApp"
           value={phone}
           onChange={e => setPhone(e.target.value)}
         />
+
+        <div>
+      <h3>Payment Method</h3>
+      <label>
+        <input
+          type="radio"
+          value="Cash"
+          checked={paymentMethod === 'Cash'}
+          onChange={setPaymentMethod}
+        />
+        Cash
+      </label>
+
+
+      <label>
+        <input
+          type="radio"
+          value="UPI"
+          checked={paymentMethod === 'UPI'}
+          onChange={setPaymentMethod}
+        />
+        UPI
+      </label>
+
+      <br /><br />
+    </div> */}
         <button onClick={placeOrder}>Place Order</button>
         <div style={{ textAlign: 'center' }}>
           <h3>Scan to Pay with UPI</h3>
