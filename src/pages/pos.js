@@ -19,6 +19,8 @@ function POS() {
     const [shops, setShops] = useState([])
     const [cart, setCart] = useState([])
     const [total, setTotal] = useState(0)
+    const [cusName, setCusName] = useState('')
+    const [paymentMethod, setPaymentMethod] = useState('');
     const [phone, setPhone] = useState('')
     const [emailToLogin, setEmailToLogin] = useState("")
     const [PasswordToLogin, setPasswordToLogin] = useState("")
@@ -88,6 +90,9 @@ function POS() {
         };
     };
 
+    const handleChangePaymentMethod = (e) => {
+        setPaymentMethod(e.target.value);
+    }
     useEffect(() => {
         // Function to fetch orders for a specific date
         const fetchOrders = async () => {
@@ -612,7 +617,7 @@ function POS() {
                 }
             ])
 
- sendWhatsApp(order)
+            sendWhatsApp(order, shops[0])
         }
 
 
@@ -632,7 +637,7 @@ function POS() {
         )
 
         // handlePrint()
-       
+
         setCart([])
         setTotal(0)
         setPhone('')
@@ -642,11 +647,77 @@ function POS() {
         })
     }
 
-    const sendWhatsApp = (order) => {
-        const items = cart.map(item => `${item.name} x ${item.qty}`).join('%0A')
+    const sendWhatsApp = (order, shop) => {
+        // const items = cart.map(item => `${item.name} x ${item.weight}`).join('%0A')
+        let total = 0;
+
+        const itemTable = cart.map(item => {
+            const weightInGrams = item.weight;// convertToGrams(item.weight);
+            let fruit_weightMatch = item.weight.match(/^(\d+(?:\.\d+)?)([a-zA-Z]+)$/);
+            let fruit_newWeightValue = parseFloat(fruit_weightMatch[1]);
+            let fruit_unit = fruit_weightMatch[2];
+            const amount = item.price * (fruit_unit == "gm" ? fruit_newWeightValue / 1000 : fruit_newWeightValue);
+            total += amount;
+            return ` ${item.name}%0A   ₹${item.price} x ${item.weight} = ₹${amount.toFixed(2)}`;
+        }).join('%0A');
+
+        const fullItemTable = `
+━━━━━━━━━━━━━━━━━━%0A
+*Order Summary*%0A
+━━━━━━━━━━━━━━━━━━%0A
+${itemTable}%0A
+━━━━━━━━━━━━━━━━━━%0A
+*Total*: ₹${total.toFixed(2)}%0A
+━━━━━━━━━━━━━━━━━━%0A
+*Payment Mode*: ${paymentMethod}
+%0A
+`;
+        console.log("order in whatsapp", order, shop, cart)
+        let order_number = order.id
+        const maskedId = `${order_number.slice(0, 8)}-${order_number.slice(-12)}`;
+
         const message = `
-        *Fruit Stall Bill* %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}
-        `
+*${shop.name}*%0A
+*Premium | Organic | Handpicked*%0A
+Location: ${shop.address}%0A
+Contact: ${shop.mobile_number}%0A
+Date: ${new Intl.DateTimeFormat('en-GB', {
+            timeZone: "Asia/Kolkata",
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "2-digit", minute: "2-digit", second: "2-digit",
+            hour12: false,
+        }).format(new Date(order.created_at))}%0A
+Bill No: ORD-${maskedId.toUpperCase()}%0A
+%0A
+*Customer*: ${cusName}%0A
+*Phone*: ${phone}%0A
+%0A
+${fullItemTable}
+%0A
+Thank you for choosing *Fresh Basket Fruits*%0A
+Instagram: @freshbasketfruits
+`;
+
+
+// *Your Fruit Basket* %0A
+        // ━━━━━━━━━━━━━━━%0A
+        // 🧾 *Bill Summary*%0A
+        // 🧺 Subtotal: ₹{summary.subtotal}%0A
+        // 🎁 Discount: ₹{summary.discount}%0A
+        // 🚚 Delivery: ₹{summary.delivery}%0A
+        // 💳 *Total Payable*: ₹{summary.total}%0A
+        // ━━━━━━━━━━━━━━━%0A
+        // ✅ *Payment*: {summary.payment_status}%0A
+        // 📦 *Delivery*: {summary.delivery_status}%0A
+        // 🌱 We deliver *freshness* to your doorstep!%0A
+        // 📲 Order again: wa.me/{shop.whatsapp_number}%0A
+        // 🔗 Instagram: @freshbasketfruits
+
+
+
+        // const message = `
+        // *Fruit Stall Bill* %0AOrder No: ${order.order_number}%0A${items}%0ATotal: ₹${total}
+        // `
         const url = `https://wa.me/${phone}?text=${message}`
         window.open(url, '_blank')
     }
@@ -1406,7 +1477,7 @@ function POS() {
                                     justifySelf: "right"
                                 }}>
                                     Total profit today:
-                                    <span style={{fontWeight:"bold"}}> &nbsp; ₹ { orderCumulativeSum} </span>
+                                    <span style={{ fontWeight: "bold" }}> &nbsp; ₹ {orderCumulativeSum} </span>
                                 </div>
                             </div>
                         </div>
@@ -1673,6 +1744,9 @@ function POS() {
                     </Dock >
                     <Shop shops={shops} cart={cart} total={total} placeOrder={placeOrder}
                         phone={phone} setPhone={setPhone}
+                        paymentMethod={paymentMethod}
+                        setPaymentMethod={handleChangePaymentMethod}
+                        cusName={cusName} setCusName={setCusName}
                         removeFromCart={(index) => { removeFromCart(index) }}
                         showAdminDock={() => showAdminDock()} />
                     {dataLoaded ? <div>

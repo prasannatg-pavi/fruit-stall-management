@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import POS from './pages/pos';
+import axios from 'axios';
+import { supabase } from './supabaseClient';
 
 const TARGET_LOCATION = {
   lat: 12.484608, // Replace with your target latitude
@@ -16,6 +18,7 @@ const TARGET_LOCATION = {
 // };
 // 10.780975, 79.152673
 const MAX_DISTANCE_KM = 0.1; // Set allowed radius (e.g., 10 km)
+
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in km
@@ -30,12 +33,81 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-
 function App() {
   const [allowed, setAllowed] = useState(null);
   const [yourCalculatedDistance, setYourCalculatedDistance] = useState(null);
+  const [isAllowed, setIsAllowed] = useState(null);
+    const [showErrorPage, setShowErrorPage] = useState(false);
+    const [config, setConfig] = useState({});
+
+    
+
+  const stringToBoolean = (value) => {
+        if (typeof value === 'boolean') return value; // already a boolean
+        if (typeof value !== 'string') return false;  // fallback
+
+        switch (value.toLowerCase().trim()) {
+            case 'true':
+            case '1':
+            case 'yes':
+                return true;
+            case 'false':
+            case '0':
+            case 'no':
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    const loadConfig = async () => {
+
+
+      
+        const { data, error } = await supabase
+            .from('config')
+            .select('key, value');
+
+        console.log("APPDDDDDDDDDDDDDDDDD", data)
+        if (error) {
+            console.error('Error loading config:', error.message);
+            setShowErrorPage(true);
+            return;
+        }
+
+        // Convert array to key-value object
+        const configObject = data.reduce((acc, { key, value }) => {
+            acc[key] = value;
+            return acc;
+        }, {});
+
+        console.log("conobject", configObject)
+        const ipLists = configObject?.ip_address
+        const ipList = JSON.parse(ipLists);
+
+         const checkIP = async () => {
+    try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        const currentIP = data.ip;
+
+        const match = ipList.includes(currentIP);
+        setIsAllowed(match);
+      } catch (err) {
+        console.error("Failed to fetch IP", err);
+        setIsAllowed(false);
+      }
+    };
+
+    checkIP();
+        // setShowErrorPage(stringToBoolean(configObject?.showErrorPage))
+        // setConfig(configObject);
+
+
+    }
 
   useEffect(() => {
+    loadConfig()
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
@@ -90,7 +162,65 @@ setAllowed((Math.round(distance * 1000) / 1000) <= MAX_DISTANCE_KM)
 
   return (
     <>
-      <POS />
+    {isAllowed===null ? <div style={{
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100vw',
+  height: '100vh',
+  backgroundColor: 'white',
+  zIndex: 9999
+}}></div> : 
+   ( isAllowed ?   showErrorPage ? (
+      <div
+                    style={{
+                        display: "flex", flexDirection: "column",
+                        justifyContent: "center", alignItems: "center",
+                        height: "50vh",
+                        marginTop: "100px"
+                    }}
+                >
+                    {/* <img style={{ width: "25%" }}
+                        src={require("../assets/icons/Server-amico.png")} /> */}
+                    <div style={{
+                        fontFamily: "calibri",
+                        color: "purple", textAlign: "center", fontSize: "25px", fontWeight: "bold"
+                    }}>
+                        System under maintenance... Please wait for a moment... <br /><br />
+                        <span style={{ fontSize: "18px" }}> &copy; Freshuit, 2025</span>
+                    </div>
+                </div>
+    ) :  <POS />  :  <div style={{
+        position: 'fixed',
+        top: 0, left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: 'black',
+        color: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontSize: '24px',
+        zIndex: 9999,
+        textAlign: 'center',
+        padding: '20px',
+      }}>
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none" stroke="#FFA500" strokeWidth="2"
+      viewBox="0 0 24 24" width="80" height="80"
+      style={{ marginBottom: '20px' }}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 005 20h14a2 2 0 001.71-3.14l-7.4-12.8a2 2 0 00-3.02 0z" />
+    </svg>
+        <p>Access Denied</p>
+        {/* <p>Your IP: { || 'Unknown'}</p> */}
+      </div>)}
+  
+     
     </>
     // <div className="App">
     //   <header className="App-header">

@@ -7,7 +7,9 @@ import Receipt from "./Receipt";
 import { useReactToPrint } from "react-to-print";
 import POSPrinter from "./POSReceipt";
 // :white_tick: :three: Cart.js — Show cart
-export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, removeFromCart, showAdminDock }) {
+export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
+  paymentMethod, setPaymentMethod,
+  cusName, setCusName, removeFromCart, showAdminDock }) {
   let shop = shops[0]
   let subtitle;
   const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -61,6 +63,9 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone, 
             overflow: "overlay"
           }}>
             <Cart cart={cart} total={total} placeOrder={placeOrder}
+            paymentMethod={paymentMethod}
+            setPaymentMethod={setPaymentMethod}
+            cusName={cusName} setCusName={setCusName}
               phone={phone} setPhone={setPhone} removeFromCart={removeFromCart} />
           </div>
           <div style={cart?.length?{
