@@ -48,7 +48,7 @@ export default function FruitList({ fruits, addToCart, config }) {
               {fruit.name} </div>
             <div style={{ marginBottom: "10px" }}>
               <span style={{ fontWeight: "bold", fontSize: "16px" }}> ₹{fruit.price} </span>
-              <span style={{ textDecoration: "line-through", fontSize: "12px" }}> ₹{(fruit.price * (1.25)).toFixed(2)} </span>
+              {/* <span style={{ textDecoration: "line-through", fontSize: "12px" }}> ₹{(fruit.price * (1.25)).toFixed(2)} </span> */}
             </div>
             <div className='divWeightInputUnit'>
               <div style={{ flex: 0.5 }}>
