@@ -193,7 +193,8 @@ function POS() {
 
             arrFinal.forEach(order => {
                 order.order_items.forEach(item => {
-                    const itemTotal = item.fruit.price * (item.quantity / 1000);
+                    const itemTotal = item.unit_price * (item.quantity / 1000);
+                    // const itemTotal = item.fruit.price * (item.quantity / 1000);
                     totalCumulativeSum += itemTotal;
                 });
             });
@@ -1010,7 +1011,7 @@ Instagram: @freshbasketfruits
                             }} />
                         </div>
                         <div className="addFruitFieldRow">
-                            <span>Enter Stock </span>
+                            <span>Enter Stock (in gms) </span>
                             <input type="text" maxLength={5} value={newFruit?.stock} onChange={(e) => {
                                 setNewFruit((prevFruit) => ({
                                     ...prevFruit,
@@ -1389,7 +1390,8 @@ Instagram: @freshbasketfruits
                             // alignContent: "center"
                         }}>
                             {/* <Calendar /> */}
-                            <Calendar onChange={setCalanderDate} value={calanderDate} selectRange={false} />
+                            <Calendar onChange={setCalanderDate} value={calanderDate} selectRange={false}
+                             maxDate={new Date()} />
 
                         </div>
                         <div style={{
@@ -1425,7 +1427,7 @@ Instagram: @freshbasketfruits
                                             <th align="center" style={{ width: "5%" }}>Weight <br />(In GMS)</th>
                                             {/* <th align="left" style={{ width: "10%" }}>Unit price</th> */}
                                             <th align="center" style={{ width: "15%" }}>Fruit name</th>
-                                            <th align="center" style={{ width: "10%" }}>Fruit Price</th>
+                                            {/* <th align="center" style={{ width: "10%" }}>Fruit Price</th> */}
                                             <th align="center" style={{ width: "5%" }}>Price per weight</th>
                                             {/* <th align="center" style={{ width: "5%" }}>Total</th> */}
 
@@ -1455,8 +1457,9 @@ Instagram: @freshbasketfruits
                                                     <td align="center" style={{ width: "5%" }}>{item.quantity}</td>
                                                     {/* <td align="left" style={{ width: "10%" }}>₹{item.unit_price}</td> */}
                                                     <td align="center" style={{ width: "15%" }}>{item.fruit.name}</td>
-                                                    <td align="center" style={{ width: "10%" }}>₹{item.fruit.price}</td>
-                                                    <td align="center" style={{ width: "5%" }}>₹{(item.fruit.price * Number((item.quantity / 1000))).toFixed(2)}</td>
+                                                    {/* <td align="center" style={{ width: "10%" }}>₹{item.fruit.price}</td> */}
+                                                    <td align="center" style={{ width: "5%" }}>₹{(item.unit_price * Number((item.quantity / 1000))).toFixed(2)}</td>
+                                                    {/* <td align="center" style={{ width: "5%" }}>₹{(item.fruit.price * Number((item.quantity / 1000))).toFixed(2)}</td> */}
                                                     {/* <td align="center" style={{ width: "10%" }}>₹{order.total}</td> */}
 
                                                 </tr>
