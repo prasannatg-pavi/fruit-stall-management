@@ -6,37 +6,113 @@ const IntroSlider = ( {onComplete} ) => {
 
   const slides = [
     {
-      title: "Welcome to FruitPOS",
+      title: "Welcome to FReshUIT",
       subtitle: "Your Complete Fruit Stall Management Solution",
       points: [
-        "Manage inventory with real-time tracking",
-        "Quick billing with barcode scanning",
-        "Track sales and generate reports",
-        "Customer management made easy"
+        "Simplifying fruit stall operations with smart technology",
+        "Manage sales, inventory and billing --- all in one place",
+        "User friendly to use - designed for local flruit vendors and wholesalers",
+        "Increase efficiency and reduce manual errors",
+        "Fast and mobile-compatible system (securely works in all devices)"
+        // "Manage inventory with real-time tracking",
+        // "Quick billing with QR scanning",
+        // "Ease in ordering and Track orders",
+        // "Paperless billing through Whatsapp"
+      ],
+      color: "#4CAF50",
+      accentColor: "#81C784"
+    },
+      {
+      title: "Why Choose FRESHuit?",
+      // subtitle: "Your Complete Fruit Stall Management Solution",
+      points: [
+        "Built specifically for fruit stall and small shops",
+        "Handles daily sales with real-time tracking",
+        "Automated inventory and billing process",
+        "Whatsapp billing integration for instant sharing (Paperless Billing)",
+        "Save time and improves customer experiences"
+        // "Manage inventory with real-time tracking",
+        // "Quick billing with QR scanning",
+        // "Ease in ordering and Track orders",
+        // "Paperless billing through Whatsapp"
+      ],
+      color: "#4CAF50",
+      accentColor: "#81C784"
+    },
+     {
+      title: "Key Features Overview  - I",
+      // subtitle: "Your Complete Fruit Stall Management Solution",
+      points: [
+        "User friendly view on Fruits list & entry on kg/gm",
+        "Admin Login for complete control",
+        "Add, Update, Hide/Unhide, Remove fruits anytime",
+        "View and Filter orders by date",
+        "Subscription-based access and IP device security*",
+        "Manage stock levels with inventory tracking",
+        // "Manage inventory with real-time tracking",
+        // "Quick billing with QR scanning",
+        // "Ease in ordering and Track orders",
+        // "Paperless billing through Whatsapp"
+      ],
+      color: "#4CAF50",
+      accentColor: "#81C784"
+    },
+     {
+      title: "Key Features Overview - II",
+      // subtitle: "Your Complete Fruit Stall Management Solution",
+      points: [
+        "Smooth Ordering with simple Cart",
+        "Cart Management with OOS",
+        "Generate instant digital bill using Whatsapp bill sharing for easy customer communication",
+        "Multiple payment mode support (Cash, UPI like GPay, PhonePE, PayTM, etc)",
+        "Auto update tock after each sale",
+        "Get low stock alert and restock reminders",
+        "Prevents wastage and overstocking"
+        // "Manage inventory with real-time tracking",
+        // "Quick billing with QR scanning",
+        // "Ease in ordering and Track orders",
+        // "Paperless billing through Whatsapp"
       ],
       color: "#4CAF50",
       accentColor: "#81C784"
     },
     {
-      title: "Smart Inventory Control",
-      subtitle: "Never Run Out of Fresh Fruits",
+      title: "Security",
+      // subtitle: "Never Run Out of Fresh Fruits",
       points: [
-        "Automatic stock alerts and notifications",
-        "Expiry date tracking for perishables",
-        "Supplier management system",
-        "Waste reduction analytics"
+        "Admin secure login",
+        "Change password",
+        "IP device restriction for controlled access",
+        "Safe cloud-based data storage"
       ],
-      color: "#FF9800",
-      accentColor: "#FFB74D"
+       color: "#4CAF50",
+      accentColor: "#81C784"
+      // color: "#FF9800",
+      // accentColor: "#FFB74D"
     },
     {
-      title: "Boost Your Sales",
-      subtitle: "Grow Your Business with Data",
+      title: "Upcoming feature while in use",
+      // subtitle: "Grow Your Business with Data",
       points: [
         "Daily, weekly, and monthly reports",
         "Customer purchase history",
         "Peak hours analysis",
-        "Best-selling products insights"
+        "Top-selling fruits insights and profit trends",
+        "Downloadable report summaries",
+        "Help make better business decisions, and Supports long-term growth tracking!!!"
+      ],
+      color: "#2196F3",
+      accentColor: "#64B5F6"
+    },
+     {
+      title: "Boost Your Sales, and Grow Your Business with FReshUIT",
+      // subtitle: "",
+      points: [
+        "One solution for all your fruit stall needs",
+        "Easy to use, reliable and scalable",
+        "Built to empower local fruit businesses",
+        "Boost efficiency and sales performance",
+        "Manage. Grow. Succeed."
       ],
       color: "#2196F3",
       accentColor: "#64B5F6"
@@ -66,23 +142,26 @@ const IntroSlider = ( {onComplete} ) => {
   };
 
   const FruitBasketSVG = ({ color, accentColor }) => (
-    <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
-      <defs>
-        <linearGradient id={`grad-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style={{ stopColor: accentColor, stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: color, stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-      <path d="M 40 120 Q 40 140 60 145 L 140 145 Q 160 140 160 120 L 150 80 L 50 80 Z" 
-            fill={`url(#grad-${color})`} stroke={color} strokeWidth="2"/>
-      <circle cx="80" cy="60" r="18" fill="#FF6B6B"/>
-      <circle cx="120" cy="55" r="20" fill="#FFD93D"/>
-      <circle cx="100" cy="70" r="16" fill="#95E1D3"/>
-      <ellipse cx="65" cy="85" rx="12" ry="18" fill="#A8E6CF"/>
-      <ellipse cx="130" cy="85" rx="14" ry="16" fill="#FF8B94"/>
-      <path d="M 80 42 Q 80 35 85 32" stroke="#2D5016" strokeWidth="2" fill="none"/>
-      <path d="M 120 37 Q 120 30 115 27" stroke="#2D5016" strokeWidth="2" fill="none"/>
-    </svg>
+    <img src={require("..//assets//icons//freshuit_transparent.png")} 
+     style={{ width: '100%', height: '100%' }}
+    />
+    // <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+    //   <defs>
+    //     <linearGradient id={`grad-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
+    //       <stop offset="0%" style={{ stopColor: accentColor, stopOpacity: 1 }} />
+    //       <stop offset="100%" style={{ stopColor: color, stopOpacity: 1 }} />
+    //     </linearGradient>
+    //   </defs>
+    //   <path d="M 40 120 Q 40 140 60 145 L 140 145 Q 160 140 160 120 L 150 80 L 50 80 Z" 
+    //         fill={`url(#grad-${color})`} stroke={color} strokeWidth="2"/>
+    //   <circle cx="80" cy="60" r="18" fill="#FF6B6B"/>
+    //   <circle cx="120" cy="55" r="20" fill="#FFD93D"/>
+    //   <circle cx="100" cy="70" r="16" fill="#95E1D3"/>
+    //   <ellipse cx="65" cy="85" rx="12" ry="18" fill="#A8E6CF"/>
+    //   <ellipse cx="130" cy="85" rx="14" ry="16" fill="#FF8B94"/>
+    //   <path d="M 80 42 Q 80 35 85 32" stroke="#2D5016" strokeWidth="2" fill="none"/>
+    //   <path d="M 120 37 Q 120 30 115 27" stroke="#2D5016" strokeWidth="2" fill="none"/>
+    // </svg>
   );
 
   const InventorySVG = ({ color, accentColor }) => (
@@ -129,20 +208,25 @@ const IntroSlider = ( {onComplete} ) => {
   const renderSVG = (index, color, accentColor) => {
     switch(index) {
       case 0:
-        return <FruitBasketSVG color={color} accentColor={accentColor} />;
       case 1:
-        return <InventorySVG color={color} accentColor={accentColor} />;
       case 2:
-        return <SalesSVG color={color} accentColor={accentColor} />;
+      case 3:
+      case 4:
       default:
         return <FruitBasketSVG color={color} accentColor={accentColor} />;
+      // case 1:
+      //   return <InventorySVG color={color} accentColor={accentColor} />;
+      // case 2:
+      //   return <SalesSVG color={color} accentColor={accentColor} />;
+      // default:
+      //   return <FruitBasketSVG color={color} accentColor={accentColor} />;
     }
   };
 
   return (
     <div style={{
       width: '100%',
-      height: '100vh',
+      height: '100%',
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#f5f5f5',
