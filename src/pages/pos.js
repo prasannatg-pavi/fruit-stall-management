@@ -677,9 +677,11 @@ ${itemTable}%0A
         let order_number = order.id
         const maskedId = `${order_number.slice(0, 8)}-${order_number.slice(-12)}`;
 
+        // *Premium | Organic | Handpicked*%0A
+
         const message = `
-*${shop.name}*%0A
-*Premium | Organic | Handpicked*%0A
+*${shop.name.toString().trim()}*%0A
+*${shop.shop_bill_description.toString().trim()}*%0A
 Location: ${shop.address}%0A
 Contact: ${shop.mobile_number}%0A
 Date: ${new Intl.DateTimeFormat('en-GB', {
@@ -695,7 +697,7 @@ Bill No: ORD-${maskedId.toUpperCase()}%0A
 %0A
 ${fullItemTable}
 %0A
-Thank you for choosing *Fresh Basket Fruits*%0A
+Thank you for choosing *${shop.name.toString().trim()}*%0A
 Instagram: @freshbasketfruits
 `;
 
@@ -1677,15 +1679,28 @@ Instagram: @freshbasketfruits
                                     margin: "80px 10px", display: "flex",
                                     flexDirection: "column",
                                 }}>
+                                    <img className="freshuitLogoTopAdmin" src={require("..//assets//icons//freshuit_transparent.png")} 
+    //  style={{ width: '60% !important', height: '100%' }}
+         style={{ marginBottom:"-30px", marginTop:"-50px"}}
+
+    />
                                     <div className='adminLoggedInMenuList'>
                                         Hi <span style={{ fontWeight: "bold" }}> {shops[0]?.admin_name}</span> !!!
                                     </div>
                                     <div className='adminLoggedInMenuTitle'>Menu</div>
                                     <div className='adminLoggedInMenu'>
-                                        <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>Add Fruits</div>
-                                        <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>Remove / Hide Fruits</div>
-                                        <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>Update Fruits Details</div>
-                                        <div onClick={() => showMContentForAdminPurpose("ORDER_PAGE")} className='adminLoggedInMenuList'>Order List</div>
+                                        <div onClick={() => showMContentForAdminPurpose("ADD_FRUIT")} className='adminLoggedInMenuList'>
+                                            {/* 🍊 */}
+                                            ➕ Add Fruits</div>
+                                        <div onClick={() => showMContentForAdminPurpose("REMOVE_HIDE_FRUIT")} className='adminLoggedInMenuList'>
+                                            {/* 🍒 */}
+                                            🚫 Remove / Hide Fruits</div>
+                                        <div onClick={() => showMContentForAdminPurpose("UPDATE_FRUIT")} className='adminLoggedInMenuList'>
+                                            {/* 🍑 */}
+                                            ✏️ Update Fruits Details</div>
+                                        <div onClick={() => showMContentForAdminPurpose("ORDER_PAGE")} className='adminLoggedInMenuList'>
+                                            {/* 🍉 */}
+                                            📋 Order List</div>
                                         {/* <div 
                                 // onClick={() => showMContentForAdminPurpose("VIEW_ORDER")} 
                                 className='adminLoggedInMenuList comingSoon'>View Orders <span className='comingSoon'>Coming soon... </span></div>
@@ -1694,13 +1709,18 @@ Instagram: @freshbasketfruits
                                 className='adminLoggedInMenuList comingSoon'>Reports <span className='comingSoon'>Coming soon... </span></div> */}
 
                                         <hr />
-                                        <div onClick={() => showMContentForAdminPurpose("CHANGE_PASSWORD")} className='adminLoggedInMenuList'>Change Password</div>
+                                        <div onClick={() => showMContentForAdminPurpose("CHANGE_PASSWORD")} className='adminLoggedInMenuList'>🔒 Change Password</div>
                                     </div>
 
                                 </div>
                             </> :
                             <>
                                 <div style={{ marginTop: "80px", display: "flex", alignItems: "center", flexDirection: "column", }}>
+                                   <img className="freshuitLogoTopAdmin" src={require("..//assets//icons//freshuit_transparent.png")} 
+    //  style={{ width: '60% !important', height: '100%' }}
+         style={{ marginBottom:"-30px"}}
+
+    />
                                     <div style={{ fontWeight: "bolder" }}>
                                         Login to Admin
                                     </div>
@@ -1739,9 +1759,9 @@ Instagram: @freshbasketfruits
                             </div>
                         </div> */}
                                     </div>
-                                    <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
+                                    {/* <div style={{ marginTop: "10px", fontSize: "0.8em", color: "lightcyan" }}>
                                         Conact Support
-                                    </div>
+                                    </div> */}
                                 </div></>}
 
                     </Dock >

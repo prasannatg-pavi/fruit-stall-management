@@ -33,7 +33,24 @@ export default function FruitList({ fruits, addToCart, config }) {
 
   return (
     <div className="mainDivWithoutHeader">
+      <div style={{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"space-between",
+        alignItems:"center"
+      }}>
       <h2>Fruits</h2>
+      <div style={{
+          display:"none"
+        }}>
+        Search
+        <span >
+          <input style={{
+            marginLeft:"10px"
+          }} />
+        </span>
+        </div>
+      </div>
       <ul className='fruitsul'>
         {fruits.map((fruit, index) => (
           <li title={fruit.name} className='fruitsli' key={fruit.id}>

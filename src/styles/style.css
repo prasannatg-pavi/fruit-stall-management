@@ -27,14 +27,50 @@
     text-transform: uppercase;
 }
 
+.freshuitLogoTop {
+    width: 8vw; /* scales with viewport width */
+    max-width: 40px; /* sets an upper limit */
+    /* min-width: 30px; sets a lower limit */
+    background: white;
+    margin: 0 1vw 0 -1vw; /* responsive margins */
+    border-radius: 50%; /* always perfectly round */
+    transition: all 0.3s ease; /* smooth resizing */
+}
+
+/* Optional: Fine-tune for smaller screens */
+@media (max-width: 600px) {
+    .freshuitLogoTop {
+        width: 20vw;
+        /* height: 10vw; */
+        /* max-width: 30px; */
+        margin: 0 3vw 0 -2vw;
+    }
+}
+/* .freshuitLogoTop {
+    width: 45px !important;
+    background: white;
+    margin: 0px 10px 0px -5px;
+    border-radius: 60px;
+} */
+
+
+.freshuitLogoTopAdmin  {
+    width: 40% !important;
+     background: white;
+    margin: 0px 10px 0px -5px;
+    border-radius: 41px;
+    align-self: center;
+}
+
 .bannerLeft {
-    flex: 0.5;
+    flex: 0.8;
     text-align: left;
     padding: 10px 30px;
+    justify-content: center;
 }
 
 .bannerRight {
-    flex: 0.5;
+    flex: 0.2;
     text-align: right;
     padding: 10px 30px;
 }
