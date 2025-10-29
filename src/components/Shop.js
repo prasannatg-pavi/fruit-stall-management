@@ -83,8 +83,18 @@ export default function Shop({ shops, cart, total, placeOrder, phone, setPhone,
       </Modal>
       <div className="bannerArea">
         <div className="bannerLeft">
+          <div style={{
+            display:"flex",
+            flexDirection:"row"
+          }}>
+            
+          <img className="freshuitLogoTop" src={require("..//assets//icons//freshuit_transparent.png")} 
+    />
+    <div>
           <div style={{ fontWeight: "bold" }}>{shop?.name}</div>
           <div>{shop?.mobile_number}</div>
+          </div>
+          </div>
         </div>
         <div className="bannerRight">
           <div style={{ display: "flex", float: "right" }}>
