@@ -319,10 +319,6 @@ function App() {
               } else {
                 console.log('Updated data:', data);
               }
-
-
-              
-              //   // navigate('/dashboard'); // if using React Router
             }} /> </>
         ) :
           isActive ? (
@@ -357,11 +353,6 @@ function App() {
                     </div>
                   </div>
                 ) :
-                  //                 <IntroSlider onComplete={() => {
-                  //   // Your custom logic here
-                  //   alert("NAV")
-                  //   // navigate('/dashboard'); // if using React Router
-                  // }} />
                   <POS />
                   : <div style={{
                     position: 'fixed',
