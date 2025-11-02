@@ -42,6 +42,7 @@ function POS() {
     })
 
     const [currentPassword, setCurrentPassword] = useState("");
+    const [createNewPassword, setCreateNewPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -702,7 +703,7 @@ Instagram: @freshbasketfruits
 `;
 
 
-// *Your Fruit Basket* %0A
+        // *Your Fruit Basket* %0A
         // ━━━━━━━━━━━━━━━%0A
         // 🧾 *Bill Summary*%0A
         // 🧺 Subtotal: ₹{summary.subtotal}%0A
@@ -752,6 +753,28 @@ Instagram: @freshbasketfruits
                 : [...prev, item]
         );
     };
+
+    const createNewPasswordFunction = async () => {
+        console.log("Matched", shops, createNewPassword)
+        const { data, error } = await supabase.from("shops")
+            .update({ 'password': encryptPassword(createNewPassword) })
+            .eq("id", shops[0].id)
+
+        console.log("datadatadata", data)
+        if (error) {
+            console.error('Error Changing password:', error.message);
+            return null;
+        }
+        toast.success("Password has changed successfully", {
+            position: "bottom-right"
+        })
+        fetchShop()
+
+        setCreateNewPassword("")
+        setCurrentPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+    }
 
     const handleChangePassword = async () => {
         console.log(">>>>>>>>.. ", shops[0].password, currentPassword, newPassword, confirmPassword);
@@ -1393,7 +1416,7 @@ Instagram: @freshbasketfruits
                         }}>
                             {/* <Calendar /> */}
                             <Calendar onChange={setCalanderDate} value={calanderDate} selectRange={false}
-                             maxDate={new Date()} />
+                                maxDate={new Date()} />
 
                         </div>
                         <div style={{
@@ -1679,11 +1702,11 @@ Instagram: @freshbasketfruits
                                     margin: "80px 10px", display: "flex",
                                     flexDirection: "column",
                                 }}>
-                                    <img className="freshuitLogoTopAdmin" src={require("..//assets//icons//freshuit_transparent.png")} 
-    //  style={{ width: '60% !important', height: '100%' }}
-         style={{ marginBottom:"-30px", marginTop:"-50px"}}
+                                    <img className="freshuitLogoTopAdmin" src={require("..//assets//icons//freshuit_transparent.png")}
+                                        //  style={{ width: '60% !important', height: '100%' }}
+                                        style={{ marginBottom: "-30px", marginTop: "-50px" }}
 
-    />
+                                    />
                                     <div className='adminLoggedInMenuList'>
                                         Hi <span style={{ fontWeight: "bold" }}> {shops[0]?.admin_name}</span> !!!
                                     </div>
@@ -1716,11 +1739,11 @@ Instagram: @freshbasketfruits
                             </> :
                             <>
                                 <div style={{ marginTop: "80px", display: "flex", alignItems: "center", flexDirection: "column", }}>
-                                   <img className="freshuitLogoTopAdmin" src={require("..//assets//icons//freshuit_transparent.png")} 
-    //  style={{ width: '60% !important', height: '100%' }}
-         style={{ marginBottom:"-30px"}}
+                                    <img className="freshuitLogoTopAdmin" src={require("..//assets//icons//freshuit_transparent.png")}
+                                        //  style={{ width: '60% !important', height: '100%' }}
+                                        style={{ marginBottom: "-30px" }}
 
-    />
+                                    />
                                     <div style={{ fontWeight: "bolder" }}>
                                         Login to Admin
                                     </div>
@@ -1731,7 +1754,8 @@ Instagram: @freshbasketfruits
                                                 <input disabled={true} value={emailToLogin} maxLength={10} style={{ textAlign: "center" }} />
                                             </div>
                                         </div>
-                                        <div style={{ marginTop: "10px" }}>
+                                        {/* Password Already Exists */}
+                                        <div style={((shops[0] && shops[0].password) != null && (shops[0] && shops[0].password) != "") ? { marginTop: "10px" } : { display: "none" }}>
                                             <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>Password</span>
                                             <div>
                                                 <input type="password"
@@ -1740,9 +1764,31 @@ Instagram: @freshbasketfruits
                                                     style={{ textAlign: "center" }} />
                                             </div>
                                         </div>
+                                        {/* Create New Password */}
+                                        <div style={((shops[0] && shops[0].password) == null || (shops[0] && shops[0].password) == "") ? { marginTop: "10px" } : { display: "none" }}>
+                                            <span style={{ fontSize: "0.8em", fontWeight: "bolder" }}>Create Password</span>
+                                            <div>
+                                                <input type="password"
+                                                    value={createNewPassword}
+                                                    onChange={(e) => { setCreateNewPassword(e.target.value) }}
+                                                    style={{ textAlign: "center" }} />
+                                            </div>
+                                        </div>
                                         <div
                                             style={{ marginTop: "10px" }}>
-                                            <div style={PasswordToLogin == PasswordToLoginEntered
+                                            <div style={(((shops[0] && shops[0].password) == null || (shops[0] && shops[0].password) == ""))
+                                                ? { marginTop: "10px" } : { marginTop: "10px", display: "none" }}>
+                                                <button
+                                                    className="btnLogin"
+                                                    onClick={() => {
+                                                        createNewPasswordFunction()
+                                                    }}
+                                                >CREATE PASSWORD</button>
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{ marginTop: "10px" }}>
+                                            <div style={(PasswordToLogin == PasswordToLoginEntered && ((shops[0] && shops[0].password) != null && (shops[0] && shops[0].password) != ""))
                                                 ? { marginTop: "10px" } : { marginTop: "10px", display: "none" }}>
                                                 <button
                                                     className="btnLogin"
