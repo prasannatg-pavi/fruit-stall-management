@@ -3,7 +3,7 @@ name: Supabase Keep Alive
 on:
   schedule:
     - cron: "*/2 * * * *"
-  workflow-dispatch:
+  workflow_dispatch:
 
 jobs:
   ping-db:
