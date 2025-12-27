@@ -178,20 +178,35 @@ function App() {
 
     console.log("conobject", configObject)
     const ipLists = configObject?.ip_address
+    const restrictIP = JSON.parse(configObject?.restrictIP)
     const ipList = JSON.parse(ipLists);
 
     const checkIP = async () => {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        const currentIP = data.ip;
+      console.log("1. >>>", restrictIP)
+      if (restrictIP) {
+              console.log("1. >>> inside if", restrictIP)
 
-        const match = ipList.includes(currentIP);
-        setIsAllowed(match);
-      } catch (err) {
-        console.error("Failed to fetch IP", err);
-        setIsAllowed(false);
+        try {
+              console.log("1. >>> inside try", restrictIP)
+
+          const res = await fetch('https://api.ipify.org?format=json');
+          const data = await res.json();
+          const currentIP = data.ip;
+
+          const match = ipList.includes(currentIP);
+          setIsAllowed(match);
+        } catch (err) {
+              console.log("1. >>> inside catch", restrictIP)
+
+          console.error("Failed to fetch IP", err);
+          setIsAllowed(false);
+        }
+      } else {
+              console.log("1. >>> inside else", restrictIP)
+
+        setIsAllowed(true);
       }
+
     };
 
     checkIP();
@@ -324,7 +339,7 @@ function App() {
           isActive ? (
             <>
               {/* <p style={{ color: "green" }}>✅ Subscription is active. App is running.</p> */}
-              {isAllowed === null ? <div style={{
+              {isAllowed === null ? (<div style={{
                 position: 'fixed',
                 top: 0,
                 left: 0,
@@ -332,8 +347,8 @@ function App() {
                 height: '100vh',
                 backgroundColor: 'white',
                 zIndex: 9999
-              }}></div> :
-                (isAllowed ? showErrorPage ? (
+              }}></div>) :
+                (isAllowed ? (showErrorPage ? (
                   <div
                     style={{
                       display: "flex", flexDirection: "column",
@@ -354,35 +369,35 @@ function App() {
                   </div>
                 ) :
                   <POS />
-                  : <div style={{
-                    position: 'fixed',
-                    top: 0, left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundColor: 'black',
-                    color: 'white',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontSize: '24px',
-                    zIndex: 9999,
-                    textAlign: 'center',
-                    padding: '20px',
-                  }}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none" stroke="#FFA500" strokeWidth="2"
-                      viewBox="0 0 24 24" width="80" height="80"
-                      style={{ marginBottom: '20px' }}
-                      aria-hidden="true"
-                      focusable="false"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 005 20h14a2 2 0 001.71-3.14l-7.4-12.8a2 2 0 00-3.02 0z" />
-                    </svg>
-                    <p>Access Denied</p>
-                    {/* <p>Your IP: { || 'Unknown'}</p> */}
-                  </div>)}
+                ) : <div style={{
+                  position: 'fixed',
+                  top: 0, left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  backgroundColor: 'black',
+                  color: 'white',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  fontSize: '24px',
+                  zIndex: 9999,
+                  textAlign: 'center',
+                  padding: '20px',
+                }}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none" stroke="#FFA500" strokeWidth="2"
+                    viewBox="0 0 24 24" width="80" height="80"
+                    style={{ marginBottom: '20px' }}
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.4 12.8A2 2 0 005 20h14a2 2 0 001.71-3.14l-7.4-12.8a2 2 0 00-3.02 0z" />
+                  </svg>
+                  <p>Access Denied</p>
+                  {/* <p>Your IP: { || 'Unknown'}</p> */}
+                </div>)}
             </>
           ) : (
             <div style={{
