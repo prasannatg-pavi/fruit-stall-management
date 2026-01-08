@@ -430,7 +430,8 @@ function App() {
                 <h2 style={{ margin: 0, fontSize: '2rem' }}> 📴 Subscription is Inactive</h2>
                 <p style={{ marginTop: '0.5rem', fontSize: '1.5rem' }}>Access denied</p>
 
-                <p style={{ marginTop: '0.85rem', fontSize: '0.8rem' }}>&copy; Freshuit, 2025</p>
+                <p style={{ marginTop: '0.85rem', fontSize: '0.8rem' }}>Contact Admin</p>
+                {/* <p style={{ marginTop: '0.85rem', fontSize: '0.8rem' }}>&copy; Freshuit, 2025</p> */}
               </div>
             </div>
             // <p style={{ color: "red" }}>❌ Subscription is inactive. Access denied.</p>
