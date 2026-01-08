@@ -39,7 +39,7 @@ export default function FruitList({ fruits, addToCart, config }) {
         justifyContent:"space-between",
         alignItems:"center"
       }}>
-      <h2>Fruits</h2>
+      {/* <h2>Fruits</h2> */}
       <div style={{
           display:"none"
         }}>
